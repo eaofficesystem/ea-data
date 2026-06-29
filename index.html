@@ -709,18 +709,33 @@ function importExcel(file){
   reader.onload=function(e){
     try{
       var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
+      if(!wb.SheetNames||!wb.SheetNames.length){ toast('الملف لا يحتوي أوراق','err'); return; }
       var allNew=[]; var counts={gov:0,companies:0,internal:0};
+      var skipped=[];
       wb.SheetNames.forEach(function(name){
-        var src=sheetToSrc(name); if(!src) return;
+        var src=sheetToSrc(name);
+        if(!src){ skipped.push(name); return; }
         var rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,raw:true,defval:null});
         var imp=parseSheetRows(rows,src);
         counts[src]+=imp.length; allNew=allNew.concat(imp);
       });
-      if(!allNew.length){ toast('لم توجد بيانات صالحة في الملف','err'); return; }
-      S.topics=S.topics.concat(allNew); save(); addLog('استيراد إكسل','استيراد '+allNew.length+' موضوع'); renderAll();
-      toast('تم استيراد '+allNew.length+' موضوع — حكومية:'+counts.gov+' | شركات ومواطنين:'+counts.companies+' | داخلية:'+counts.internal,'ok');
+      if(!allNew.length){
+        var msg='لم توجد بيانات صالحة. ';
+        if(skipped.length) msg+='أسماء الأوراق غير معروفة: '+skipped.join('، ')+'. ';
+        msg+='تأكدي أن اسم الورقة (حكومية/شركات/مذكرات) وأن العمود "الموضوع" موجود.';
+        toast(msg,'err'); return;
+      }
+      S.topics=S.topics.concat(allNew);
+      autoSnapshot('قبل استيراد إكسل');
+      save();
+      addLog('استيراد إكسل','استيراد '+allNew.length+' موضوع');
+      renderAll();
+      var t='تم استيراد '+allNew.length+' موضوع — حكومية:'+counts.gov+' | شركات ومواطنين:'+counts.companies+' | داخلية:'+counts.internal;
+      if(S.session&&S.session.role==='admin'&&getGHConfig()&&getGHConfig().token){ t+=' ✓ يُرفع للسحابة'; }
+      toast(t,'ok');
     }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
   };
+  reader.onerror=function(){ toast('تعذّر قراءة الملف','err'); };
   reader.readAsArrayBuffer(file);
 }
 
@@ -1477,19 +1492,10 @@ function ghPushSilent(){
   if(_pushTimer) clearTimeout(_pushTimer);
   _pushTimer=setTimeout(async function(){
     var cfg=getGHConfig(); if(!cfg||!cfg.token) return;
-    try{
-      var payload={version:'1.0',exportedAt:new Date().toISOString(),exportedBy:S.session?S.session.username:'',topics:S.topics};
-      var content=JSON.stringify(payload,null,2);
-      var contentB64=btoa(unescape(encodeURIComponent(content)));
-      var fileUrl='https://api.github.com/repos/'+cfg.user+'/'+cfg.repo+'/contents/'+GH_DATA_FILE;
-      var sha=null;
-      try{ var gr=await fetch(fileUrl,{headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}}); if(gr.ok){ var gd=await gr.json(); sha=gd.sha; } }catch(_){}
-      var body={message:'تحديث تلقائي: '+new Date().toLocaleString('ar-SA'),content:contentB64};
-      if(sha) body.sha=sha;
-      var pr=await fetch(fileUrl,{method:'PUT',headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-      if(pr.ok){ setSyncIndicator('✅ متزامن','#5cd3a6'); }
-      else { setSyncIndicator('⚠️ فشل الرفع','#e74c3c'); }
-    }catch(e){ setSyncIndicator('⚠️ خطأ','#e74c3c'); }
+    setSyncIndicator('⬆️ جاري الرفع...','#e67e22');
+    var ok=await ghPut(cfg, true);
+    if(ok){ setSyncIndicator('✅ متزامن','#5cd3a6'); }
+    else { setSyncIndicator('⚠️ فشل الرفع','#e74c3c'); }
   },2000);
 }
 function setSyncIndicator(txt,color){
@@ -1501,26 +1507,40 @@ window.uploadToGitHub=async function uploadToGitHub(){
   if(!cfg){ toast('يرجى إعداد GitHub أولاً','err'); return; }
   showGhInfo('⬆️ جاري رفع البيانات...','#f8f9fa');
   updateGhStatus('⬆️ جاري الرفع...','#e67e22');
+  var ok=await ghPut(cfg, true);
+  if(ok){
+    showGhInfo('✅ تم الرفع بنجاح!<br>📊 '+S.topics.length+' موضوع<br>🕒 '+new Date().toLocaleString('ar-SA'),'#e8f8f5');
+    updateGhStatus('✅ متزامن','#1d8349');
+    addLog('رفع GitHub','رفع '+S.topics.length+' موضوع');
+  } else {
+    showGhInfo('❌ فشل الرفع — تحققي من الـ Token والاتصال','#fdeaea');
+    updateGhStatus('❌ فشل','#c0392b');
+  }
+}
+
+/* رفع موحّد مع جلب SHA طازج وإعادة محاولة عند تعارض SHA */
+async function ghPut(cfg, retry){
   try{
     var payload={version:'1.0',exportedAt:new Date().toISOString(),exportedBy:S.session?S.session.username:'',topics:S.topics};
-    var content=JSON.stringify(payload,null,2);
-    var contentB64=btoa(unescape(encodeURIComponent(content)));
+    var contentB64=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
     var fileUrl='https://api.github.com/repos/'+cfg.user+'/'+cfg.repo+'/contents/'+GH_DATA_FILE;
+    // اجلب آخر SHA طازج (بدون كاش)
     var sha=null;
-    try{ var gr=await fetch(fileUrl,{headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}}); if(gr.ok){ var fd=await gr.json(); sha=fd.sha; } }catch(_){}
+    try{
+      var gr=await fetch(fileUrl+'?t='+Date.now(),{cache:'no-store',headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}});
+      if(gr.ok){ var fd=await gr.json(); sha=fd.sha; }
+    }catch(_){}
     var body={message:'تحديث البيانات: '+new Date().toLocaleString('ar-SA'),content:contentB64};
     if(sha) body.sha=sha;
     var pr=await fetch(fileUrl,{method:'PUT',headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(pr.ok){
-      showGhInfo('✅ تم الرفع بنجاح!<br>📊 '+S.topics.length+' موضوع<br>🕒 '+new Date().toLocaleString('ar-SA'),'#e8f8f5');
-      updateGhStatus('✅ متزامن','#1d8349');
-      addLog('رفع GitHub','رفع '+S.topics.length+' موضوع');
-    } else {
-      var er=await pr.json();
-      showGhInfo('❌ فشل الرفع: '+(er.message||'خطأ'),'#fdeaea');
-      updateGhStatus('❌ فشل','#c0392b');
+    if(pr.ok) return true;
+    // تعارض SHA (409 أو 422) — أعد المحاولة مرة واحدة بـ SHA جديد
+    if((pr.status===409||pr.status===422)&&retry){
+      await new Promise(function(r){ setTimeout(r,800); });
+      return await ghPut(cfg, false);
     }
-  }catch(e){ showGhInfo('❌ خطأ: '+e.message,'#fdeaea'); updateGhStatus('❌ فشل','#c0392b'); }
+    return false;
+  }catch(e){ return false; }
 }
 window.downloadFromGitHub=async function downloadFromGitHub(){
   var pub=getGHPublic();
