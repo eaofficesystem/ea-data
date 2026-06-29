@@ -186,10 +186,10 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       <div class="login-left">
         <div>
           <span class="badge">سجلّ الوارد</span>
-          <h2>متابعة المواضيع الواردة<br>من الجهات والمواطنين</h2>
-          <p>سجلّ مركزي لتوثيق ومتابعة المراسلات الواردة لمكتب رئيس هيئة البيئة.</p>
+          <h2>سجل المواضيع الواردة</h2>
+          <p>سجلّ مركزي لتوثيق المراسلات الواردة لمكتب رئيس هيئة البيئة.</p>
         </div>
-        <div class="note">هذه المنصة مستقلة بالكامل عن نظام متابعة التوجيهات والمذكرات.</div>
+        <div class="note">هذه المنصة هي نظام لتوثيق المراسلات الواردة وتسجيل مدة الرد على الجهات.</div>
       </div>
       <div class="login-right">
         <h3>تسجيل الدخول</h3>
@@ -293,7 +293,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
   <div class="wrap" style="max-width:780px;margin:0 auto;">
 
     <div class="alert-warn" style="background:#fef9e7;border:1.5px solid #f0c350;border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13.5px;">
-      💾 النسخ الاحتياطي والاسترجاع — لرحاب فقط
+      💾 النسخ الاحتياطي والاسترجاع — للمدير فقط
     </div>
 
     <!-- تصدير نسخة -->
@@ -362,11 +362,11 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
             <div>
               <label style="font-size:12px;font-weight:700;display:block;margin-bottom:5px;">اسم المستخدم في GitHub</label>
-              <input type="text" id="ghUser" placeholder="مثال: rahab2026" style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;">
+              <input type="text" id="ghUser" placeholder="اسم المستخدم في GitHub" style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;">
             </div>
             <div>
               <label style="font-size:12px;font-weight:700;display:block;margin-bottom:5px;">اسم المستودع</label>
-              <input type="text" id="ghRepo" placeholder="مثال: ea-data" value="ea-data" style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;">
+              <input type="text" id="ghRepo" placeholder="اسم المستودع" style="width:100%;padding:9px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;">
             </div>
           </div>
           <div style="margin-bottom:14px;">
@@ -397,7 +397,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
           </div>
           <div id="gh-info" style="margin-top:10px;padding:12px;background:#fff;border-radius:8px;font-size:12.5px;color:#555;display:none;line-height:1.8;"></div>
           <div style="font-size:11.5px;color:#555;line-height:1.9;margin-top:10px;">
-            ✦ <b>للمدير (رحاب):</b> اضغطي "⬆️ رفع" بعد كل تعديل لمشاركة البيانات<br>
+            ✦ <b>للمدير:</b> اضغطي "⬆️ رفع" بعد كل تعديل لمشاركة البيانات<br>
             ✦ <b>للمسؤولين:</b> اضغطوا "⬇️ تحميل" لمشاهدة آخر التحديثات<br>
             ✦ <b>المزامنة التلقائية:</b> تحدّث البيانات كل 60 ثانية تلقائياً
           </div>
@@ -587,9 +587,9 @@ function load(){
   try{ var r=localStorage.getItem(SK); if(r) S.topics=JSON.parse(r); }catch(e){ S.topics=[]; }
 }
 async function loadFromGitHub(){
-  var cfg=getGHConfig(); if(!cfg||!cfg.user||!cfg.repo) return;
+  var pub=getGHPublic(); if(!pub||!pub.user||!pub.repo) return;
   try{
-    var url='https://raw.githubusercontent.com/'+cfg.user+'/'+cfg.repo+'/main/'+GH_DATA_FILE+'?t='+Date.now();
+    var url='https://raw.githubusercontent.com/'+pub.user+'/'+pub.repo+'/main/'+GH_DATA_FILE+'?t='+Date.now();
     var res=await fetch(url,{cache:'no-store'});
     if(!res.ok) return;
     var imported=await res.json();
@@ -1299,7 +1299,7 @@ function initLogin(){
   };
   document.getElementById('loginBtn').onclick=doLogin;
   document.getElementById('loginPass').onkeydown=document.getElementById('loginUser').onkeydown=function(e){ if(e.key==='Enter') doLogin(); };
-  document.getElementById('guestBtn').onclick=function(){ S.session=null; saveSess(); enterApp(); };
+  document.getElementById('guestBtn').onclick=function(){ S.session=null; saveSess(); enterApp(); setTimeout(function(){ loadFromGitHub(); },300); };
 }
 
 function doLogin(){
@@ -1311,6 +1311,7 @@ function doLogin(){
   if(u===acc.username&&p===acc.password){
     S.session={role:acc.role,username:acc.username,label:acc.label};
     saveSess(); err.style.display='none'; enterApp();
+    setTimeout(function(){ loadFromGitHub(); },300);
   } else { err.textContent='بيانات الدخول غير صحيحة';err.style.display='block'; }
 }
 
@@ -1395,7 +1396,17 @@ var GH_CONFIG_KEY = 'incoming_gh_config_v1';
 var GH_DATA_FILE  = 'data.json';
 var autoSyncInterval = null;
 
-function getGitHubConfig(){
+// إعدادات عامة مدمجة — تتيح لأي زائر تحميل البيانات بدون token أو إعدادات
+var GH_PUBLIC_DEFAULT = { user:'eaofficesystem', repo:'ea-data' };
+
+// يرجّع إعدادات GitHub (المحفوظة للمدير أو العامة للزوار) لاستخدامها في التحميل
+function getGHPublic(){
+  var cfg=getGHConfig();
+  if(cfg && cfg.user && cfg.repo) return { user:cfg.user, repo:cfg.repo };
+  return GH_PUBLIC_DEFAULT;
+}
+
+function getGHConfig(){
   try{ var r=localStorage.getItem(GH_CONFIG_KEY); return r?JSON.parse(r):null; }catch(e){ return null; }
 }
 window.saveGitHubConfig=function saveGitHubConfig(){
@@ -1412,16 +1423,16 @@ window.clearGitHubConfig=function clearGitHubConfig(){
   if(!confirm('هل تريدين مسح إعدادات GitHub؟')) return;
   localStorage.removeItem(GH_CONFIG_KEY);
   document.getElementById('ghUser').value='';
-  document.getElementById('ghRepo').value='ea-data';
+  document.getElementById('ghRepo').value='';
   document.getElementById('ghToken').value='';
   updateGhStatus('⚪ غير مفعّل','#9aa6b8');
   toast('تم مسح الإعدادات','ok');
 }
 function loadGitHubConfig(){
-  var cfg=getGitHubConfig();
+  var cfg=getGHConfig();
   if(!cfg) return;
   if(document.getElementById('ghUser')) document.getElementById('ghUser').value=cfg.user||'';
-  if(document.getElementById('ghRepo')) document.getElementById('ghRepo').value=cfg.repo||'ea-data';
+  if(document.getElementById('ghRepo')) document.getElementById('ghRepo').value=cfg.repo||'';
   if(document.getElementById('ghToken')) document.getElementById('ghToken').value=cfg.token||'';
   updateGhStatus('✅ مفعّل','#1d8349');
 }
@@ -1437,7 +1448,7 @@ function showGhInfo(html,bg){
   el.innerHTML=html;
 }
 window.testGitHubConnection=async function testGitHubConnection(){
-  var cfg=getGitHubConfig();
+  var cfg=getGHConfig();
   if(!cfg){ toast('احفظي الإعدادات أولاً','err'); return; }
   showGhInfo('🔍 جاري الاختبار...','#f8f9fa');
   try{
@@ -1486,7 +1497,7 @@ function setSyncIndicator(txt,color){
   els.forEach(function(id){ var el=document.getElementById(id); if(el){ el.textContent=txt; el.style.background=color==='#5cd3a6'?'rgba(92,211,166,0.25)':color==='#e74c3c'?'rgba(231,76,60,0.15)':'rgba(0,0,0,0.06)'; el.style.color=color; } });
 }
 window.uploadToGitHub=async function uploadToGitHub(){
-  var cfg=getGitHubConfig();
+  var cfg=getGHConfig();
   if(!cfg){ toast('يرجى إعداد GitHub أولاً','err'); return; }
   showGhInfo('⬆️ جاري رفع البيانات...','#f8f9fa');
   updateGhStatus('⬆️ جاري الرفع...','#e67e22');
@@ -1512,12 +1523,12 @@ window.uploadToGitHub=async function uploadToGitHub(){
   }catch(e){ showGhInfo('❌ خطأ: '+e.message,'#fdeaea'); updateGhStatus('❌ فشل','#c0392b'); }
 }
 window.downloadFromGitHub=async function downloadFromGitHub(){
-  var cfg=getGitHubConfig();
-  if(!cfg){ toast('يرجى إعداد GitHub أولاً','err'); return; }
+  var pub=getGHPublic();
+  if(!pub||!pub.user){ toast('لا توجد إعدادات GitHub','err'); return; }
   showGhInfo('⬇️ جاري التحميل...','#f8f9fa');
   updateGhStatus('⬇️ جاري التحميل...','#2e86c1');
   try{
-    var url='https://raw.githubusercontent.com/'+cfg.user+'/'+cfg.repo+'/main/'+GH_DATA_FILE+'?t='+Date.now();
+    var url='https://raw.githubusercontent.com/'+pub.user+'/'+pub.repo+'/main/'+GH_DATA_FILE+'?t='+Date.now();
     var res=await fetch(url,{cache:'no-store'});
     if(!res.ok){ showGhInfo(res.status===404?'⚠️ لا توجد بيانات مرفوعة بعد':'❌ خطأ: '+res.status,'#fef9e7'); return; }
     var imported=await res.json();
@@ -1537,7 +1548,7 @@ window.toggleAutoSync=function toggleAutoSync(){
     btn.textContent='🔄 تفعيل المزامنة التلقائية'; btn.style.background='#1a3a5b';
     showGhInfo('⏸️ تم إيقاف المزامنة التلقائية','#fef9e7');
   } else {
-    var cfg=getGitHubConfig(); if(!cfg){ toast('يرجى إعداد GitHub أولاً','err'); return; }
+    var cfg=getGHConfig(); if(!cfg){ toast('يرجى إعداد GitHub أولاً','err'); return; }
     autoSyncInterval=setInterval(function(){ if(S.session&&S.session.role==='admin') uploadToGitHub(); else downloadFromGitHub(); },60000);
     btn.textContent='⏸️ إيقاف المزامنة التلقائية'; btn.style.background='#1d8349';
     showGhInfo('✅ المزامنة التلقائية مفعّلة (كل 60 ثانية)','#e8f8f5');
@@ -1580,9 +1591,9 @@ function init(){
 
   if(S.session){
     enterApp();
-    // تحميل من GitHub تلقائياً عند الفتح
-    setTimeout(function(){ loadFromGitHub(); },800);
   }
+  // تحميل من GitHub تلقائياً عند الفتح — للجميع (مدير وزوار)
+  setTimeout(function(){ loadFromGitHub(); },600);
 }
 
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
