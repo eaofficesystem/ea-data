@@ -725,18 +725,62 @@ function importExcel(file){
         msg+='تأكدي أن اسم الورقة (حكومية/شركات/مذكرات) وأن العمود "الموضوع" موجود.';
         toast(msg,'err'); return;
       }
-      S.topics=S.topics.concat(allNew);
-      autoSnapshot('قبل استيراد إكسل');
-      save();
-      addLog('استيراد إكسل','استيراد '+allNew.length+' موضوع');
-      renderAll();
-      var t='تم استيراد '+allNew.length+' موضوع — حكومية:'+counts.gov+' | شركات ومواطنين:'+counts.companies+' | داخلية:'+counts.internal;
-      if(S.session&&S.session.role==='admin'&&getGHConfig()&&getGHConfig().token){ t+=' ✓ يُرفع للسحابة'; }
-      toast(t,'ok');
+      // نافذة خيار: إضافة فوق الموجود أو استبدال الكل
+      showExcelImportChoice(allNew, counts);
     }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
   };
   reader.onerror=function(){ toast('تعذّر قراءة الملف','err'); };
   reader.readAsArrayBuffer(file);
+}
+
+function showExcelImportChoice(allNew, counts){
+  var detail='حكومية: '+counts.gov+' | شركات ومواطنين: '+counts.companies+' | داخلية: '+counts.internal;
+  var html='<div class="overlay" id="xl_ov"><div class="modal" style="max-width:480px;">'+
+    '<div class="mh"><h3>📊 استيراد ملف إكسل</h3><button class="mc" id="xl_close">✕</button></div>'+
+    '<div class="mb">'+
+      '<p style="font-size:13.5px;color:var(--ink-soft);line-height:1.9;margin-bottom:6px;">'+
+        'الملف يحتوي <strong>'+allNew.length+'</strong> موضوع.<br>'+
+        '<span style="font-size:12px;color:var(--gray)">'+detail+'</span><br><br>'+
+        'اختاري طريقة الاستيراد:'+
+      '</p>'+
+      '<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">'+
+        '<button class="btn btn-teal" id="xl_add" style="justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">➕ إضافة فوق الموجود</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُضاف المواضيع الجديدة دون حذف الموجودة</div></div>'+
+        '</button>'+
+        '<button class="btn" id="xl_replace" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">🔄 استبدال الكل</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُحذف جميع البيانات الحالية وتُستبدل بالملف الجديد</div></div>'+
+        '</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="mf"><button class="btn btn-outline" id="xl_cancel">إلغاء</button></div>'+
+  '</div></div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('xl_close').onclick=cl;
+  document.getElementById('xl_cancel').onclick=cl;
+  document.getElementById('xl_ov').onclick=function(ev){ if(ev.target.id==='xl_ov') cl(); };
+
+  document.getElementById('xl_add').onclick=function(){
+    autoSnapshot('قبل استيراد إكسل (إضافة)');
+    S.topics=S.topics.concat(allNew);
+    save(); addLog('استيراد إكسل','إضافة '+allNew.length+' موضوع'); renderAll(); cl();
+    finishExcelImport(allNew.length, counts, 'إضافة');
+  };
+  document.getElementById('xl_replace').onclick=function(){
+    if(!confirm('⚠️ سيتم حذف جميع البيانات الحالية ('+S.topics.length+' موضوع) واستبدالها بـ '+allNew.length+' موضوع.\nهل أنتِ متأكدة؟')) return;
+    autoSnapshot('قبل استيراد إكسل (استبدال)');
+    S.topics=allNew.slice();
+    save(); addLog('استيراد إكسل','استبدال الكل بـ '+allNew.length+' موضوع'); renderAll(); cl();
+    finishExcelImport(allNew.length, counts, 'استبدال');
+  };
+}
+
+function finishExcelImport(n, counts, mode){
+  var t=(mode==='استبدال'?'تم استبدال الكل بـ ':'تمت إضافة ')+n+' موضوع — حكومية:'+counts.gov+' | شركات ومواطنين:'+counts.companies+' | داخلية:'+counts.internal;
+  if(S.session&&S.session.role==='admin'&&getGHConfig()&&getGHConfig().token){ t+=' ✓ يُرفع للسحابة'; }
+  toast(t,'ok');
 }
 
 /* ═══════════════ RENDER ════════════════ */
