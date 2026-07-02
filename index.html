@@ -193,7 +193,6 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       </div>
       <div class="login-right">
         <h3>تسجيل الدخول</h3>
-        <p class="sub">اختاري صلاحيتك، أو تابعي كزائر للاطلاع المباشر.</p>
         <div class="role-tabs" id="roleToggle">
           <button type="button" class="active" data-role="admin">مدير</button>
           <button type="button" data-role="editor">مفوَّض بالإضافة</button>
@@ -219,6 +218,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
     <div class="topbar-right">
       <span class="chip"><span class="dot" id="sessDot"></span><span id="sessLabel">زائر</span></span>
       <span style="font-size:11.5px;padding:4px 10px;border-radius:20px;background:rgba(0,0,0,0.06);font-weight:600;display:none;" id="ghStatusChip">⚪ غير متزامن</span>
+      <button class="btn btn-ghost btn-sm hidden" id="indexPageBtn">📊 مؤشر مدة الرد</button>
       <button class="btn btn-ghost btn-sm hidden" id="syncPageBtn">☁️ مزامنة GitHub</button>
       <button class="btn btn-ghost btn-sm hidden" id="backupPageBtn">💾 نسخ احتياطي</button>
       <button class="btn btn-ghost btn-sm hidden" id="logBtn">📋 سجل المستخدمين</button>
@@ -409,6 +409,52 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
   </div>
   <footer>سجلّ الوارد — منصة مستقلة لمتابعة المواضيع الواردة · هيئة البيئة</footer>
 </div>
+
+<!-- ══════════════ صفحة مؤشر مدة الرد ══════════════ -->
+<div id="indexScreen" class="hidden main">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">ب</div>
+      <div><h1>مؤشر مدة الرد</h1><p>هيئة البيئة — مكتب الرئيس</p></div>
+    </div>
+    <div class="topbar-right">
+      <span class="chip"><span class="dot" id="idxSessDot"></span><span id="idxSessLabel">مدير</span></span>
+      <button class="btn btn-ghost btn-sm" onclick="showMain()">← العودة للسجل</button>
+      <button class="btn btn-ghost btn-sm" id="idxLogoutBtn">خروج</button>
+    </div>
+  </div>
+  <div class="wrap">
+
+    <!-- مؤشرات النسب -->
+    <div class="kpi-row" id="idxKpiRow"></div>
+
+    <!-- تبويبات الفئات -->
+    <div class="src-tabs" id="idxCatTabs" style="margin-bottom:14px;"></div>
+
+    <!-- شريط الأدوات -->
+    <div class="toolbar" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px;">
+      <button class="btn btn-teal btn-sm" id="idxAddBtn">+ إضافة موضوع للسجل</button>
+      <input type="file" id="idxImportFile" accept=".xlsx,.xls" style="display:none;">
+      <button class="btn btn-outline btn-sm" id="idxClassifyBtn" style="border-color:var(--teal);color:var(--teal);">🔗 تصنيف من إكسل</button>
+      <button class="btn btn-outline btn-sm" id="idxExportBtn">📊 تصدير إكسل</button>
+      <button class="btn btn-outline btn-sm" id="idxReportBtn">📈 التقارير</button>
+      <button class="btn btn-outline btn-sm" id="idxHolidaysBtn">📅 الإجازات</button>
+      <button class="btn btn-outline btn-sm" id="idxFormulaBtn">⚙️ المعادلة</button>
+      <div style="flex:1;min-width:150px;">
+        <input type="text" id="idxSearch" placeholder="🔍 بحث بالموضوع أو الجهة" style="width:100%;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;">
+      </div>
+    </div>
+
+    <!-- الجدول -->
+    <div class="tbl-scroll">
+      <table class="dt" id="idxTable"></table>
+    </div>
+    <div class="pager" id="idxPager"></div>
+
+  </div>
+  <footer>مؤشر مدة الرد — يُحتسب حسب المؤشر المعتمد · هيئة البيئة</footer>
+</div>
+
 <div id="toast-wrap"></div>
 <div id="modals"></div>
 
@@ -432,6 +478,8 @@ var SOURCES = [
       { key:'letterDate',   label:'تاريخ الرسالة',          w:110 },
       { key:'arrivalDate',  label:'تاريخ وصول الرسالة',     w:120 },
       { key:'referredDate', label:'تاريخ توجية سعادته',     w:120 },
+      { key:'letterPrepDate', label:'تاريخ إعداد الخطاب',   w:120 },
+      { key:'idxCategory',  label:'نوع المؤشر',            w:130 },
       { key:'status',       label:'الحالة',                  w:110 },
       { key:'responseDate', label:'تاريخ الرد على الجهة',   w:120 },
       { key:'kpi',          label:'المؤشر',                  w:110 },
@@ -490,6 +538,103 @@ var STATUS = {
 
 var PAGE_SIZE = 25;
 
+/* ═══════════════ مؤشر مدة الرد — الثوابت ════════════════ */
+var IDX_SK      = 'incoming_idx_v1';       // مواضيع المؤشر
+var IDX_HOL_KEY = 'incoming_holidays_v1';  // الإجازات الرسمية
+var IDX_CFG_KEY = 'incoming_idxcfg_v1';    // إعدادات المعادلة
+
+// الفئات المعتمدة ومددها المستهدفة (بالأيام)
+var IDX_CATEGORIES = [
+  { key:'tarsheeh',   label:'سرعة الرد بترشيح',  target:2  },
+  { key:'murajaat',   label:'سرعة الرد بمراجعات', target:3  },
+  { key:'okhra',      label:'أخرى',              target:5  },
+  { key:'dirasa',     label:'سرعة الرد بدراسة',  target:14 },
+  { key:'taqreer',    label:'سرعة الرد بتقرير',  target:14 }
+];
+function idxCat(key){ for(var i=0;i<IDX_CATEGORIES.length;i++){ if(IDX_CATEGORIES[i].key===key) return IDX_CATEGORIES[i]; } return null; }
+
+// الإجازات الرسمية الافتراضية (النصف الأول 2026) — قابلة للتعديل والإضافة
+var IDX_HOLIDAYS_DEFAULT = [
+  { date:'2026-01-15', name:'يوم تولّي السلطان مقاليد الحكم' },
+  { date:'2026-01-18', name:'الإسراء والمعراج' },
+  { date:'2026-03-19', name:'عيد الفطر السعيد' },
+  { date:'2026-03-22', name:'عيد الفطر السعيد' },
+  { date:'2026-03-23', name:'عيد الفطر السعيد' },
+  { date:'2026-05-26', name:'عيد الأضحى المبارك' },
+  { date:'2026-05-27', name:'عيد الأضحى المبارك' },
+  { date:'2026-05-28', name:'عيد الأضحى المبارك' },
+  { date:'2026-06-18', name:'رأس السنة الهجرية' }
+];
+function loadHolidays(){
+  try{ var r=localStorage.getItem(IDX_HOL_KEY); if(r){ var p=JSON.parse(r); if(Array.isArray(p)) return p; } }catch(e){}
+  return IDX_HOLIDAYS_DEFAULT.slice();
+}
+function saveHolidays(list){ try{ localStorage.setItem(IDX_HOL_KEY,JSON.stringify(list)); }catch(e){} }
+function holidaySet(){
+  var s={}; loadHolidays().forEach(function(h){ if(h && h.date) s[h.date]=true; }); return s;
+}
+
+// إعدادات المعادلة — قابلة للتعديل مستقبلاً
+var IDX_CFG_DEFAULT = {
+  startField: 'referredDate',   // من: تاريخ توجيه سعادته
+  endField:   'letterPrepDate', // إلى: تاريخ إعداد الخطاب
+  countStartDay: false,         // نفس اليوم = 0 (لا نعدّ يوم البداية)
+  skipWeekend: true,            // استثناء الجمعة/السبت
+  skipHolidays: true            // استثناء الإجازات الرسمية
+};
+function loadIdxCfg(){
+  try{ var r=localStorage.getItem(IDX_CFG_KEY); if(r){ var p=JSON.parse(r); if(p) return Object.assign({},IDX_CFG_DEFAULT,p); } }catch(e){}
+  return Object.assign({},IDX_CFG_DEFAULT);
+}
+function saveIdxCfg(cfg){ try{ localStorage.setItem(IDX_CFG_KEY,JSON.stringify(cfg)); }catch(e){} }
+
+// مواضيع المؤشر = المواضيع الحكومية التي لها تاريخ توجيه (المدة تُحسب تلقائياً)
+// الفئة اختيارية: تُستخدم لنسبة الإنجاز. المواضيع بلا فئة تظهر تحت "غير مصنّف"
+function idxSourceTopics(){
+  return S.topics.filter(function(t){
+    return t.source==='gov' && t.referredDate;
+  });
+}
+
+// حساب مدة الرد حسب المعادلة (أيام العمل من البداية للنهاية، -الإجازات، نفس اليوم=0)
+function idxTopicDuration(t){
+  var cfg=loadIdxCfg();
+  return idxDuration(t[cfg.startField], t[cfg.endField]);
+}
+function idxDuration(startStr, endStr){
+  var cfg=loadIdxCfg();
+  var s=toDate(startStr), e=toDate(endStr);
+  if(!s||!e) return null;
+  if(e<s) return null;
+  var hols = cfg.skipHolidays ? holidaySet() : {};
+  function isOff(d){
+    if(cfg.skipWeekend){ var w=d.getDay(); if(w===5||w===6) return true; }
+    if(cfg.skipHolidays){ var key=d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate()); if(hols[key]) return true; }
+    return false;
+  }
+  // انقل البداية لأول يوم عمل إن كانت عطلة
+  var cur=new Date(s);
+  while(isOff(cur)){ cur.setDate(cur.getDate()+1); }
+  if(e<cur) return 0;
+  var count=0;
+  var walk=new Date(cur);
+  if(cfg.countStartDay && !isOff(walk)) count++;
+  while(walk<e){
+    walk.setDate(walk.getDate()+1);
+    if(!isOff(walk)) count++;
+  }
+  return count;
+}
+
+// نسبة الإنجاز: 100% ضمن المدة، تتناقص، 0% عند ضعف المدة
+function idxAchievement(duration, target){
+  if(duration===null||duration===undefined||!target) return null;
+  if(duration<=target) return 100;
+  if(duration>=target*2) return 0;
+  return Math.round((1-((duration-target)/target))*100);
+}
+
+
 /* ═══════════════ ACCOUNTS ════════════════ */
 function loadAccounts(){
   try{
@@ -510,8 +655,16 @@ var S = {
   session: null,
   src: 'gov',
   q: '', statusF: '', kpiF: '',
-  page: 1
+  page: 1,
+  idxTopics: [],       // مواضيع مؤشر مدة الرد
+  idxCat: 'tarsheeh',  // الفئة المختارة في المؤشر
+  idxQ: '', idxPage: 1
 };
+function idxLoad(){ try{ var r=localStorage.getItem(IDX_SK); if(r){ var p=JSON.parse(r); if(Array.isArray(p)) S.idxTopics=p; } }catch(e){ S.idxTopics=[]; } }
+function idxSave(){
+  try{ localStorage.setItem(IDX_SK,JSON.stringify(S.idxTopics)); }catch(e){}
+  if(S.session && S.session.role==='admin') ghPushSilent();
+}
 
 /* ═══════════════ DATE UTILS ════════════════ */
 function p2(n){ return (n<10?'0':'')+n; }
@@ -594,12 +747,26 @@ async function loadFromGitHub(){
     if(!res.ok) return;
     var imported=await res.json();
     var topics=imported.topics||[];
-    if(!topics.length) return;
+    // دمج بيانات المؤشر إن وُجدت
+    if(Array.isArray(imported.idxTopics)){
+      S.idxTopics=imported.idxTopics;
+      try{ localStorage.setItem(IDX_SK,JSON.stringify(S.idxTopics)); }catch(e){}
+    }
+    if(Array.isArray(imported.holidays)){ saveHolidays(imported.holidays); }
+    if(imported.idxCfg){ saveIdxCfg(imported.idxCfg); }
+    if(!topics.length){
+      // حتى لو ما فيه مواضيع رئيسية، حدّث المؤشر لو ظاهر
+      var ixScr=document.getElementById('indexScreen');
+      if(ixScr && !ixScr.classList.contains('hidden')) idxRenderAll();
+      return;
+    }
     // احفظ نسخة احتياطية قبل الكتابة
     autoSnapshot('قبل التحميل من GitHub');
     S.topics=topics;
     try{ localStorage.setItem(SK,JSON.stringify(S.topics)); }catch(e){}
     renderAll();
+    var ixScr2=document.getElementById('indexScreen');
+    if(ixScr2 && !ixScr2.classList.contains('hidden')) idxRenderAll();
     setSyncIndicator('✅ متزامن','#5cd3a6');
   }catch(e){ /* صامت */ }
 }
@@ -632,7 +799,8 @@ var HMAP = {
   'تاريخ توجيه سعادته':'referredDate','تاريخ اعداد الخطاب':'letterPrepDate',
   'تاريخ اعداد الخطاب ':'letterPrepDate','تاريخ إعداد الخطاب':'letterPrepDate',
   'تاريخ الرد على الجهة':'respCell','تاريخ الرد من الجهة':'respCell',
-  'مدة الرد':'durationRaw','المحتوى':'content'
+  'مدة الرد':'durationRaw','المحتوى':'content',
+  'نوع المؤشر':'idxCategoryRaw','فئة المؤشر':'idxCategoryRaw'
 };
 
 function detectCols(hdr){
@@ -650,7 +818,7 @@ function isDivider(row,cm){
   return !!(row[si]) && !row[ei] && !row[di];
 }
 
-function parseSheetRows(rows, srcKey){
+function parseSheetRows(rows, srcKey, sheetCat){
   if(!rows||rows.length<2) return [];
   var hi=-1;
   for(var r=0;r<Math.min(5,rows.length);r++){
@@ -671,6 +839,18 @@ function parseSheetRows(rows, srcKey){
     var durRaw=cm.durationRaw!==undefined?row[cm.durationRaw]:null;
     var durNum=null;
     if(typeof durRaw==='number'&&isFinite(durRaw)) durNum=Math.round(durRaw);
+    // الفئة: من العمود إن وُجد، وإلا من اسم الورقة
+    var catFromCol=(function(){
+      if(cm.idxCategoryRaw===undefined) return null;
+      var v=normH(row[cm.idxCategoryRaw]); if(!v) return null;
+      for(var ci=0;ci<IDX_CATEGORIES.length;ci++){ if(IDX_CATEGORIES[ci].label===v||IDX_CATEGORIES[ci].key===v) return IDX_CATEGORIES[ci].key; }
+      if(v.indexOf('ترشيح')>=0) return 'tarsheeh';
+      if(v.indexOf('مراجع')>=0) return 'murajaat';
+      if(v.indexOf('دراس')>=0) return 'dirasa';
+      if(v.indexOf('تقرير')>=0) return 'taqreer';
+      if(v.indexOf('أخرى')>=0||v.indexOf('اخرى')>=0) return 'okhra';
+      return null;
+    })();
     out.push({
       id:uid(), source:srcKey,
       subject:String(subj).trim(),
@@ -680,6 +860,7 @@ function parseSheetRows(rows, srcKey){
       arrivalDate:cm.arrivalDate!==undefined?toDate(row[cm.arrivalDate]):null,
       referredDate:cm.referredDate!==undefined?toDate(row[cm.referredDate]):null,
       letterPrepDate:cm.letterPrepDate!==undefined?toDate(row[cm.letterPrepDate]):null,
+      idxCategory: catFromCol || sheetCat || null,
       status:resp.status, responseDate:resp.responseDate, respRaw:resp.raw,
       durationDays:durNum,
       content:cm.content!==undefined?(row[cm.content]||''):'',
@@ -701,6 +882,18 @@ function sheetToSrc(name){
   if(n.indexOf('حكوم')>=0) return 'gov';
   if(n.indexOf('شركات')>=0||n.indexOf('مواطن')>=0) return 'companies';
   if(n.indexOf('مذكر')>=0||n.indexOf('داخلي')>=0) return 'internal';
+  // أوراق مؤشر مدة الرد (كل ورقة = فئة، وكلها جهات حكومية)
+  if(sheetToIdxCat(n)) return 'gov';
+  return null;
+}
+// كشف فئة المؤشر من اسم الورقة (ملف مؤشر مدة الرد)
+function sheetToIdxCat(name){
+  var n=(name||'').trim();
+  if(n.indexOf('ترشيح')>=0) return 'tarsheeh';
+  if(n.indexOf('مراجع')>=0) return 'murajaat';
+  if(n.indexOf('دراس')>=0) return 'dirasa';
+  if(n.indexOf('تقرير')>=0) return 'taqreer';
+  if(n.indexOf('أخرى')>=0||n.indexOf('اخرى')>=0) return 'okhra';
   return null;
 }
 
@@ -715,8 +908,9 @@ function importExcel(file){
       wb.SheetNames.forEach(function(name){
         var src=sheetToSrc(name);
         if(!src){ skipped.push(name); return; }
+        var sheetCat=sheetToIdxCat(name); // فئة المؤشر من اسم الورقة (إن وُجدت)
         var rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,raw:true,defval:null});
-        var imp=parseSheetRows(rows,src);
+        var imp=parseSheetRows(rows,src,sheetCat);
         counts[src]+=imp.length; allNew=allNew.concat(imp);
       });
       if(!allNew.length){
@@ -765,14 +959,18 @@ function showExcelImportChoice(allNew, counts){
   document.getElementById('xl_add').onclick=function(){
     autoSnapshot('قبل استيراد إكسل (إضافة)');
     S.topics=S.topics.concat(allNew);
-    save(); addLog('استيراد إكسل','إضافة '+allNew.length+' موضوع'); renderAll(); cl();
+    save(); addLog('استيراد إكسل','إضافة '+allNew.length+' موضوع'); renderAll();
+    var ix1=document.getElementById('indexScreen'); if(ix1&&!ix1.classList.contains('hidden')) idxRenderAll();
+    cl();
     finishExcelImport(allNew.length, counts, 'إضافة');
   };
   document.getElementById('xl_replace').onclick=function(){
     if(!confirm('⚠️ سيتم حذف جميع البيانات الحالية ('+S.topics.length+' موضوع) واستبدالها بـ '+allNew.length+' موضوع.\nهل أنتِ متأكدة؟')) return;
     autoSnapshot('قبل استيراد إكسل (استبدال)');
     S.topics=allNew.slice();
-    save(); addLog('استيراد إكسل','استبدال الكل بـ '+allNew.length+' موضوع'); renderAll(); cl();
+    save(); addLog('استيراد إكسل','استبدال الكل بـ '+allNew.length+' موضوع'); renderAll();
+    var ix2=document.getElementById('indexScreen'); if(ix2&&!ix2.classList.contains('hidden')) idxRenderAll();
+    cl();
     finishExcelImport(allNew.length, counts, 'استبدال');
   };
 }
@@ -859,6 +1057,8 @@ function renderTable(){
         case 'letterDate': return '<td>'+fmt(t.letterDate)+'</td>';
         case 'arrivalDate': return '<td>'+fmt(t.arrivalDate)+'</td>';
         case 'referredDate': return '<td>'+fmt(t.referredDate)+'</td>';
+        case 'letterPrepDate': return '<td>'+fmt(t.letterPrepDate)+'</td>';
+        case 'idxCategory': var ic=idxCat(t.idxCategory); return '<td>'+(ic?'<span class="badge" style="background:var(--teal-s);color:var(--teal)">'+esc(ic.label)+'</span>':'<span style="color:var(--gray);font-size:11px">—</span>')+'</td>';
         case 'status': return '<td><span class="badge '+st.cls+'">'+st.label+'</span></td>';
         case 'responseDate': return '<td>'+(t.responseDate?fmt(t.responseDate):(t.respRaw?'<span style="color:var(--gray);font-size:11px">'+esc(String(t.respRaw).slice(0,40))+'</span>':'—'))+'</td>';
         case 'kpi': return '<td><span class="kpi-pill kp-'+ki.bucket+'">'+kl+'</span></td>';
@@ -925,6 +1125,10 @@ function openTopicModal(topic, viewOnly){
 
         (hasRef?'<div class="field"><label>تاريخ توجية سعادته</label><input type="date" id="f_rdate" value="'+dateInput(t.referredDate)+'" '+dis+'></div>':'<div></div>')+
         (hasRef?'<div class="field"><label>تاريخ اعداد الخطاب</label><input type="date" id="f_pdate" value="'+dateInput(t.letterPrepDate)+'" '+dis+'></div>':'<div></div>')+
+        (hasRef?'<div class="field"><label>فئة المؤشر</label><select id="f_idxcat" '+dis+'>'+
+          '<option value="">— غير محدّدة —</option>'+
+          IDX_CATEGORIES.map(function(c){ return '<option value="'+c.key+'"'+(t.idxCategory===c.key?' selected':'')+'>'+esc(c.label)+' ('+c.target+' يوم)</option>'; }).join('')+
+          '</select><div class="ht">حدّدي الفئة لإدراج الموضوع في مؤشر مدة الرد</div></div>':'')+
 
         '<div class="field"><label>الحالة</label><select id="f_status" '+dis+'>'+
           Object.keys(STATUS).map(function(k){ return '<option value="'+k+'"'+(t.status===k?' selected':'')+'>'+STATUS[k].label+'</option>'; }).join('')+
@@ -970,6 +1174,7 @@ function openTopicModal(topic, viewOnly){
     var durEl=document.getElementById('f_dur');
     var rdateEl=document.getElementById('f_rdate');
     var pdateEl=document.getElementById('f_pdate');
+    var idxcatEl=document.getElementById('f_idxcat');
     var rec={
       id:t.id||uid(), source:newSrc, subject:subj,
       fromEntity:document.getElementById('f_entity').value.trim(),
@@ -978,6 +1183,7 @@ function openTopicModal(topic, viewOnly){
       arrivalDate:document.getElementById('f_adate').value?new Date(document.getElementById('f_adate').value):null,
       referredDate:rdateEl&&rdateEl.value?new Date(rdateEl.value):(t.referredDate||null),
       letterPrepDate:pdateEl&&pdateEl.value?new Date(pdateEl.value):(t.letterPrepDate||null),
+      idxCategory:idxcatEl?(idxcatEl.value||null):(t.idxCategory||null),
       status:newSt,
       responseDate:newSt==='responded'&&rdEl&&rdEl.value?new Date(rdEl.value):null,
       respRaw:t.respRaw||'',
@@ -992,6 +1198,8 @@ function openTopicModal(topic, viewOnly){
     if(isNew){ S.topics.push(rec); addLog('إضافة', rec.subject.slice(0,50)); toast('تمت الإضافة','ok'); }
     else{ var ix=S.topics.findIndex(function(x){ return x.id===rec.id; }); if(ix>=0) S.topics[ix]=rec; addLog('تعديل', rec.subject.slice(0,50)); toast('تم الحفظ','ok'); }
     save(); S.src=rec.source; closeModal(); renderAll();
+    var ixScr=document.getElementById('indexScreen');
+    if(ixScr && !ixScr.classList.contains('hidden')) idxRenderAll();
   };
 }
 
@@ -1025,6 +1233,8 @@ function buildRows(list){
         case 'letterDate': row['تاريخ الرسالة']=fmt(t.letterDate); break;
         case 'arrivalDate': row['تاريخ وصول الرسالة']=fmt(t.arrivalDate); break;
         case 'referredDate': row['تاريخ توجية سعادته']=fmt(t.referredDate); break;
+        case 'letterPrepDate': row['تاريخ إعداد الخطاب']=fmt(t.letterPrepDate); break;
+        case 'idxCategory': var ic=idxCat(t.idxCategory); row['نوع المؤشر']=ic?ic.label:''; break;
         case 'status': row['الحالة']=st.label||''; break;
         case 'responseDate': row['تاريخ الرد']=(t.responseDate?fmt(t.responseDate):(t.respRaw||'—')); break;
         case 'kpi': row['المؤشر']=kpiLbl(ki,t); break;
@@ -1036,6 +1246,7 @@ function buildRows(list){
 }
 
 function exportExcel(){
+  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال بالإنترنت','err'); return; }
   var list=filtered(); if(!list.length){ toast('لا توجد بيانات','err'); return; }
   var ws=XLSX.utils.json_to_sheet(buildRows(list));
   var wb2=XLSX.utils.book_new();
@@ -1059,6 +1270,8 @@ function buildPrintHTML(list){
         case 'letterDate': return '<td>'+fmt(t.letterDate)+'</td>';
         case 'arrivalDate': return '<td>'+fmt(t.arrivalDate)+'</td>';
         case 'referredDate': return '<td>'+fmt(t.referredDate)+'</td>';
+        case 'letterPrepDate': return '<td>'+fmt(t.letterPrepDate)+'</td>';
+        case 'idxCategory': var ic=idxCat(t.idxCategory); return '<td>'+(ic?esc(ic.label):'—')+'</td>';
         case 'status': return '<td>'+st.label+'</td>';
         case 'responseDate': return '<td>'+(t.responseDate?fmt(t.responseDate):(t.respRaw||'—'))+'</td>';
         case 'kpi': return '<td>'+kpiLbl(ki,t)+'</td>';
@@ -1395,6 +1608,7 @@ function applyRole(){
   document.getElementById('backupPageBtn').classList.toggle('hidden',role!=='admin');
   document.getElementById('logBtn').classList.toggle('hidden',role!=='admin');
   document.getElementById('settingsBtn').classList.toggle('hidden',role!=='admin');
+  var ixb=document.getElementById('indexPageBtn'); if(ixb) ixb.classList.remove('hidden');
 }
 
 window.doLogout=function doLogout(){
@@ -1410,6 +1624,7 @@ window.doLogout=function doLogout(){
 window.showMain=function showMain(){
   document.getElementById('backupScreen').classList.add('hidden');
   document.getElementById('syncScreen').classList.add('hidden');
+  var idx=document.getElementById('indexScreen'); if(idx) idx.classList.add('hidden');
   document.getElementById('mainScreen').classList.remove('hidden');
 }
 window.showBackup=function showBackup(){
@@ -1423,12 +1638,165 @@ window.showBackup=function showBackup(){
 window.showSync=function showSync(){
   document.getElementById('mainScreen').classList.add('hidden');
   document.getElementById('backupScreen').classList.add('hidden');
+  document.getElementById('indexScreen').classList.add('hidden');
   document.getElementById('syncScreen').classList.remove('hidden');
   var dot=document.getElementById('syncSessDot');
   var lbl=document.getElementById('syncSessLabel');
   if(dot&&S.session){ dot.style.background='#5cd3a6'; lbl.textContent=S.session.label; }
   loadGitHubConfig();
 }
+
+/* ═══════════════ مؤشر مدة الرد — الصفحة والعرض ════════════════ */
+window.showIndex=function showIndex(){
+  document.getElementById('mainScreen').classList.add('hidden');
+  document.getElementById('backupScreen').classList.add('hidden');
+  document.getElementById('syncScreen').classList.add('hidden');
+  document.getElementById('indexScreen').classList.remove('hidden');
+  var role=S.session?S.session.role:'guest';
+  var dot=document.getElementById('idxSessDot');
+  var lbl=document.getElementById('idxSessLabel');
+  if(dot) dot.style.background = role==='admin'?'#5cd3a6':(role==='editor'?'#f0c350':'#9aa6b8');
+  if(lbl) lbl.textContent = S.session?S.session.label:'زائر';
+  // زر الإضافة والاستيراد للمدير والمفوّض فقط — الزائر اطلاع فقط
+  var addBtn=document.getElementById('idxAddBtn');
+  if(addBtn) addBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
+  var impBtn=document.getElementById('idxClassifyBtn');
+  if(impBtn) impBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
+  idxRenderAll();
+}
+
+function idxRenderAll(){ idxRenderKPI(); idxRenderTabs(); idxRenderTable(); }
+
+function idxRenderTabs(){
+  var el=document.getElementById('idxCatTabs'); if(!el) return;
+  var src=idxSourceTopics();
+  var tabs=IDX_CATEGORIES.map(function(cat){
+    var n=src.filter(function(t){ return t.idxCategory===cat.key; }).length;
+    return '<button class="src-tab'+(cat.key===S.idxCat?' active':'')+'" data-cat="'+cat.key+'">'+
+      esc(cat.label)+' <span style="opacity:.7">('+cat.target+' يوم)</span> <span class="cnt">'+n+'</span></button>';
+  });
+  // تبويب غير مصنّف
+  var uncat=src.filter(function(t){ return !t.idxCategory || !idxCat(t.idxCategory); }).length;
+  tabs.push('<button class="src-tab'+('uncat'===S.idxCat?' active':'')+'" data-cat="uncat" style="border-style:dashed;">'+
+    'غير مصنّف <span class="cnt">'+uncat+'</span></button>');
+  el.innerHTML=tabs.join('');
+}
+
+function idxRenderKPI(){
+  var el=document.getElementById('idxKpiRow'); if(!el) return;
+  var src=idxSourceTopics();
+  // نسبة الإنجاز لكل فئة + الإجمالي
+  var cards=[];
+  var totalAch=0, totalCount=0;
+  IDX_CATEGORIES.forEach(function(cat){
+    var items=src.filter(function(t){ return t.idxCategory===cat.key && t.letterPrepDate; });
+    var sum=0,cnt=0;
+    items.forEach(function(t){
+      var dur=idxTopicDuration(t);
+      var ach=idxAchievement(dur, cat.target);
+      if(ach!==null){ sum+=ach; cnt++; totalAch+=ach; totalCount++; }
+    });
+    var avg = cnt>0 ? Math.round(sum/cnt) : null;
+    cards.push({label:cat.label, val:avg, cnt:cnt});
+  });
+  var totalAvg = totalCount>0 ? Math.round(totalAch/totalCount) : null;
+  var uncatCount = src.filter(function(t){ return !t.idxCategory || !idxCat(t.idxCategory); }).length;
+  var html='<div class="kpi-card" style="border-top:3px solid var(--teal);">'+
+    '<div class="kpi-num">'+(totalAvg!==null?totalAvg+'%':'—')+'</div>'+
+    '<div class="kpi-lbl">نسبة الإنجاز الكلية</div></div>';
+  cards.forEach(function(c){
+    var color = c.val===null?'#9aa6b8':(c.val>=90?'#1d8349':(c.val>=70?'#e67e22':'#c0392b'));
+    html+='<div class="kpi-card"><div class="kpi-num" style="color:'+color+'">'+(c.val!==null?c.val+'%':'—')+'</div>'+
+      '<div class="kpi-lbl">'+esc(c.label)+'<br><span style="font-size:10px;color:var(--gray)">'+c.cnt+' موضوع</span></div></div>';
+  });
+  if(uncatCount>0){
+    html+='<div class="kpi-card" style="border-top:3px solid #9aa6b8;"><div class="kpi-num" style="color:#9aa6b8">'+uncatCount+'</div>'+
+      '<div class="kpi-lbl">غير مصنّف<br><span style="font-size:10px;color:var(--gray)">يحتاج تحديد فئة</span></div></div>';
+  }
+  el.innerHTML=html;
+}
+
+function idxFiltered(){
+  var q=(S.idxQ||'').trim();
+  return idxSourceTopics().filter(function(t){
+    if(S.idxCat==='uncat'){
+      if(t.idxCategory && idxCat(t.idxCategory)) return false; // له فئة → مو غير مصنّف
+    } else {
+      if(t.idxCategory!==S.idxCat) return false;
+    }
+    if(q){
+      var hay=((t.subject||'')+' '+(t.fromEntity||'')).toLowerCase();
+      if(hay.indexOf(q.toLowerCase())<0) return false;
+    }
+    return true;
+  });
+}
+
+function idxRenderTable(){
+  var el=document.getElementById('idxTable'); if(!el) return;
+  var cat=idxCat(S.idxCat);
+  var list=idxFiltered();
+  var total=list.length;
+  var pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+  if(S.idxPage>pages) S.idxPage=pages;
+  var start=(S.idxPage-1)*PAGE_SIZE;
+  var pageItems=list.slice(start,start+PAGE_SIZE);
+  var canEdit = S.session && (S.session.role==='admin'||S.session.role==='editor');
+
+  var head='<thead><tr>'+
+    '<th>م</th><th>الموضوع</th><th>الجهة الوارد منها</th><th>رقم الرسالة</th>'+
+    '<th>تاريخ التوجيه</th><th>تاريخ إعداد الخطاب</th><th>تاريخ الرد</th>'+
+    '<th>نوع المؤشر</th><th>مدة الرد</th><th>نسبة الإنجاز</th>'+(canEdit?'<th>إجراءات</th>':'')+'</tr></thead>';
+
+  if(!pageItems.length){
+    el.innerHTML=head+'<tbody><tr><td colspan="'+(canEdit?11:10)+'" style="text-align:center;color:var(--gray);padding:40px">لا توجد مواضيع في هذه الفئة</td></tr></tbody>';
+    document.getElementById('idxPager').innerHTML='';
+    return;
+  }
+
+  var rows=pageItems.map(function(t,i){
+    var tcat=idxCat(t.idxCategory);
+    var dur=idxTopicDuration(t);
+    var ach=tcat?idxAchievement(dur, tcat.target):null;
+    var achColor = ach===null?'#9aa6b8':(ach>=90?'#1d8349':(ach>=70?'#e67e22':'#c0392b'));
+    var durTxt = dur===null?'—':dur+' يوم';
+    var achTxt = ach===null?'—':ach+'%';
+    var catTxt = tcat?'<span class="badge" style="background:var(--teal-s);color:var(--teal)">'+esc(tcat.label)+'</span>':'<span style="color:var(--gray);font-size:11px">غير مصنّف</span>';
+    return '<tr>'+
+      '<td>'+(start+i+1)+'</td>'+
+      '<td style="text-align:right;font-weight:600">'+esc(t.subject||'')+'</td>'+
+      '<td style="text-align:right">'+esc(t.fromEntity||'')+'</td>'+
+      '<td>'+esc(t.letterNo||'')+'</td>'+
+      '<td>'+fmtD(t.referredDate)+'</td>'+
+      '<td>'+fmtD(t.letterPrepDate)+'</td>'+
+      '<td>'+fmtD(t.responseDate)+'</td>'+
+      '<td>'+catTxt+'</td>'+
+      '<td style="font-weight:700">'+durTxt+'</td>'+
+      '<td style="font-weight:700;color:'+achColor+'">'+achTxt+'</td>'+
+      (canEdit?'<td><button class="btn btn-outline btn-sm" onclick="idxOpenTopic(\''+t.id+'\')">تعديل</button></td>':'')+
+    '</tr>';
+  }).join('');
+  el.innerHTML=head+'<tbody>'+rows+'</tbody>';
+
+  // ترقيم الصفحات
+  var pg=document.getElementById('idxPager');
+  if(pages>1){
+    pg.innerHTML='<button class="btn btn-outline btn-sm" '+(S.idxPage<=1?'disabled':'')+' onclick="idxGoPage('+(S.idxPage-1)+')">السابق</button>'+
+      '<span style="margin:0 12px">صفحة '+S.idxPage+' من '+pages+'</span>'+
+      '<button class="btn btn-outline btn-sm" '+(S.idxPage>=pages?'disabled':'')+' onclick="idxGoPage('+(S.idxPage+1)+')">التالي</button>';
+  } else pg.innerHTML='';
+}
+window.idxGoPage=function(p){ S.idxPage=p; idxRenderTable(); };
+
+// فتح موضوع من المؤشر → يفتح نموذج الموضوع الأصلي في السجل
+window.idxOpenTopic=function(id){
+  var t=S.topics.filter(function(x){return x.id===id;})[0];
+  if(!t){ toast('الموضوع غير موجود','err'); return; }
+  openTopicModal(t, false);
+};
+
+function fmtD(v){ var d=toDate(v); if(!d) return '—'; return p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear(); }
+
 
 /* ═══════════════ RESTORE LAST GOOD ════════════════ */
 var LASTGOOD_KEY = 'incoming_lastgood_v1';
@@ -1565,7 +1933,8 @@ window.uploadToGitHub=async function uploadToGitHub(){
 /* رفع موحّد مع جلب SHA طازج وإعادة محاولة عند تعارض SHA */
 async function ghPut(cfg, retry){
   try{
-    var payload={version:'1.0',exportedAt:new Date().toISOString(),exportedBy:S.session?S.session.username:'',topics:S.topics};
+    var payload={version:'1.1',exportedAt:new Date().toISOString(),exportedBy:S.session?S.session.username:'',topics:S.topics,
+      idxTopics:S.idxTopics, holidays:loadHolidays(), idxCfg:loadIdxCfg()};
     var contentB64=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
     var fileUrl='https://api.github.com/repos/'+cfg.user+'/'+cfg.repo+'/contents/'+GH_DATA_FILE;
     // اجلب آخر SHA طازج (بدون كاش)
@@ -1621,7 +1990,7 @@ window.toggleAutoSync=function toggleAutoSync(){
 
 /* ═══════════════ INIT ════════════════ */
 function init(){
-  load(); loadSess();
+  load(); loadSess(); idxLoad();
   // إذا لم توجد بيانات — أبقِ المنصة فارغة جاهزة للاستيراد
   var saved=loadAccounts(); ACCOUNTS.admin=saved.admin; ACCOUNTS.editor=saved.editor;
   initLogin();
@@ -1653,11 +2022,401 @@ function init(){
   document.getElementById('bakLogoutBtn').onclick=function(){ if(confirm('تسجيل الخروج؟')){ showMain(); doLogout(); }};
   document.getElementById('syncLogoutBtn').onclick=function(){ if(confirm('تسجيل الخروج؟')){ showMain(); doLogout(); }};
 
+  // ═══ أزرار مؤشر مدة الرد ═══
+  var idxBtn=document.getElementById('indexPageBtn'); if(idxBtn) idxBtn.onclick=showIndex;
+  var e1;
+  if(e1=document.getElementById('idxCatTabs')) e1.addEventListener('click',function(e){
+    var btn=e.target.closest('.src-tab'); if(!btn) return;
+    S.idxCat=btn.getAttribute('data-cat'); S.idxPage=1; S.idxQ='';
+    var si=document.getElementById('idxSearch'); if(si) si.value='';
+    idxRenderAll();
+  });
+  if(e1=document.getElementById('idxSearch')) e1.oninput=function(e){ S.idxQ=e.target.value; S.idxPage=1; idxRenderTable(); };
+  if(e1=document.getElementById('idxAddBtn')) e1.onclick=idxAdd;
+  if(e1=document.getElementById('idxClassifyBtn')) e1.onclick=function(){ document.getElementById('idxImportFile').click(); };
+  if(e1=document.getElementById('idxImportFile')) e1.onchange=function(ev){ var f=ev.target.files[0]; if(f){ idxClassifyFromExcel(f); } ev.target.value=''; };
+  if(e1=document.getElementById('idxExportBtn')) e1.onclick=idxExport;
+  if(e1=document.getElementById('idxReportBtn')) e1.onclick=idxReport;
+  if(e1=document.getElementById('idxHolidaysBtn')) e1.onclick=idxHolidays;
+  if(e1=document.getElementById('idxFormulaBtn')) e1.onclick=idxFormula;
+  if(e1=document.getElementById('idxLogoutBtn')) e1.onclick=function(){ if(confirm('تسجيل الخروج؟')){ showMain(); doLogout(); }};
+
   if(S.session){
     enterApp();
   }
   // تحميل من GitHub تلقائياً عند الفتح — للجميع (مدير وزوار)
   setTimeout(function(){ loadFromGitHub(); },600);
+}
+
+
+/* ═══════════════ مؤشر مدة الرد — إضافة/تعديل/حذف ════════════════ */
+window.idxAdd=function(){
+  // الإضافة تتم من سجل الجهات الحكومية مع تحديد فئة المؤشر
+  S.src='gov';
+  showMain();
+  openTopicModal(null,false);
+  // بعد فتح النموذج، اضبط الفئة الحالية للمؤشر تلقائياً
+  setTimeout(function(){
+    var sel=document.getElementById('f_idxcat');
+    if(sel) sel.value=S.idxCat;
+  },100);
+};
+/* النظام القديم للمؤشر (idxEdit/idxDelete/idxOpenModal) أُزيل — المؤشر الآن مربوط بسجل الجهات الحكومية */
+
+
+/* ═══════════════ مؤشر — إدارة الإجازات ════════════════ */
+window.idxHolidays=function(){
+  var list=loadHolidays();
+  var canEdit = S.session && (S.session.role==='admin'||S.session.role==='editor');
+  function rowHtml(h,i){
+    if(!canEdit){
+      // للزائر: عرض فقط بدون حقول قابلة للتعديل ولا زر حذف
+      var d=h.date?fmtD(h.date):'—';
+      return '<tr><td>'+esc(d)+'</td><td style="text-align:right">'+esc(h.name||'')+'</td></tr>';
+    }
+    return '<tr>'+
+      '<td><input type="date" value="'+esc(h.date||'')+'" data-i="'+i+'" class="hol-date" style="padding:6px;border:1px solid var(--line);border-radius:6px;"></td>'+
+      '<td><input type="text" value="'+esc(h.name||'')+'" data-i="'+i+'" class="hol-name" style="padding:6px;border:1px solid var(--line);border-radius:6px;width:100%"></td>'+
+      '<td><button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="idxHolDel('+i+')">حذف</button></td>'+
+    '</tr>';
+  }
+  var infoTxt = canEdit
+    ? 'النظام يستثني هذه التواريخ من حساب مدة الرد. الجمعة والسبت عطلة تلقائية لا تحتاج تسجيل. أضيفي إجازات النصف الثاني أو عدّلي حسب الإعلانات الرسمية.'
+    : 'النظام يستثني هذه التواريخ من حساب مدة الرد. الجمعة والسبت عطلة تلقائية. (عرض فقط)';
+  var html='<div class="overlay" id="hol_ov" style="align-items:flex-start;overflow-y:auto;padding:16px;">'+
+    '<div class="modal wide" style="max-height:none;">'+
+      '<div class="mh"><h3>📅 '+(canEdit?'إدارة الإجازات الرسمية':'الإجازات الرسمية')+'</h3><button class="mc" id="hol_close">✕</button></div>'+
+      '<div class="mb" style="padding:0;">'+
+        '<div style="padding:12px 16px;background:var(--teal-s);font-size:12.5px;color:var(--ink-soft);">'+infoTxt+'</div>'+
+        '<div class="tbl-scroll"><table class="dt" style="min-width:0"><thead><tr><th>التاريخ</th><th>المناسبة</th>'+(canEdit?'<th></th>':'')+'</tr></thead>'+
+        '<tbody id="hol_body">'+list.map(rowHtml).join('')+'</tbody></table></div>'+
+        (canEdit?'<div style="padding:12px 16px;"><button class="btn btn-outline btn-sm" id="hol_add">+ إضافة إجازة</button></div>':'')+
+      '</div>'+
+      '<div class="mf">'+(canEdit
+        ? '<button class="btn btn-outline" id="hol_cancel">إلغاء</button><button class="btn btn-teal" id="hol_save">حفظ الإجازات</button>'
+        : '<button class="btn btn-teal" id="hol_cancel">إغلاق</button>')+'</div>'+
+    '</div>'+
+  '</div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('hol_close').onclick=cl;
+  document.getElementById('hol_cancel').onclick=cl;
+  document.getElementById('hol_ov').onclick=function(e){ if(e.target.id==='hol_ov') cl(); };
+  if(!canEdit) return; // الزائر: لا مزيد من الربط (اطلاع فقط)
+  document.getElementById('hol_add').onclick=function(){
+    var tb=document.getElementById('hol_body');
+    var i=tb.querySelectorAll('tr').length;
+    var tr=document.createElement('tr'); tr.innerHTML=rowHtml({date:'',name:''},i);
+    tb.appendChild(tr);
+  };
+  window.idxHolDel=function(i){
+    var rows=document.querySelectorAll('#hol_body tr');
+    if(rows[i]) rows[i].remove();
+  };
+  document.getElementById('hol_save').onclick=function(){
+    var dates=document.querySelectorAll('#hol_body .hol-date');
+    var names=document.querySelectorAll('#hol_body .hol-name');
+    var out=[];
+    for(var i=0;i<dates.length;i++){
+      var d=dates[i].value, n=names[i].value.trim();
+      if(d) out.push({date:d, name:n||'إجازة'});
+    }
+    out.sort(function(a,b){ return a.date<b.date?-1:1; });
+    saveHolidays(out); addLog('تعديل الإجازات', out.length+' إجازة'); cl();
+    toast('تم حفظ الإجازات ('+out.length+')','ok'); idxRenderAll();
+  };
+};
+
+/* ═══════════════ مؤشر — إعدادات المعادلة ════════════════ */
+window.idxFormula=function(){
+  var cfg=loadIdxCfg();
+  var canEdit = S.session && (S.session.role==='admin'||S.session.role==='editor');
+  var dis = canEdit?'':'disabled';
+  var fieldOpts=function(sel){
+    var fields=[['referredDate','تاريخ توجيه سعادته'],['letterPrepDate','تاريخ إعداد الخطاب'],['responseDate','تاريخ الرد على الجهة'],['arrivalDate','تاريخ وصول الرسالة'],['letterDate','تاريخ الرسالة']];
+    return fields.map(function(f){ return '<option value="'+f[0]+'"'+(f[0]===sel?' selected':'')+'>'+f[1]+'</option>'; }).join('');
+  };
+  var html='<div class="overlay" id="fx_ov"><div class="modal" style="max-width:520px;">'+
+    '<div class="mh"><h3>⚙️ '+(canEdit?'إعدادات معادلة الاحتساب':'معادلة الاحتساب')+'</h3><button class="mc" id="fx_close">✕</button></div>'+
+    '<div class="mb">'+
+      '<p style="font-size:12.5px;color:var(--ink-soft);margin-bottom:14px;">'+(canEdit?'تُحسب مدة الرد كعدد أيام العمل بين تاريخين، مع استثناء العطلات. يمكنك تعديل المعادلة هنا وقت الحاجة.':'تُحسب مدة الرد كعدد أيام العمل بين تاريخين، مع استثناء العطلات. (عرض فقط)')+'</p>'+
+      '<div class="field"><label>حساب المدة من</label><select id="fx_start" '+dis+'>'+fieldOpts(cfg.startField)+'</select></div>'+
+      '<div class="field"><label>إلى</label><select id="fx_end" '+dis+'>'+fieldOpts(cfg.endField)+'</select></div>'+
+      '<label style="display:flex;align-items:center;gap:8px;margin:10px 0;font-size:13.5px;"><input type="checkbox" id="fx_start_day" '+(cfg.countStartDay?'checked':'')+' '+dis+'> عدّ يوم البداية (إن لم يُفعّل: نفس اليوم = صفر)</label>'+
+      '<label style="display:flex;align-items:center;gap:8px;margin:10px 0;font-size:13.5px;"><input type="checkbox" id="fx_we" '+(cfg.skipWeekend?'checked':'')+' '+dis+'> استثناء الجمعة والسبت</label>'+
+      '<label style="display:flex;align-items:center;gap:8px;margin:10px 0;font-size:13.5px;"><input type="checkbox" id="fx_hol" '+(cfg.skipHolidays?'checked':'')+' '+dis+'> استثناء الإجازات الرسمية</label>'+
+    '</div>'+
+    '<div class="mf">'+(canEdit
+      ? '<button class="btn btn-outline" id="fx_reset">استعادة الافتراضي</button><button class="btn btn-outline" id="fx_cancel">إلغاء</button><button class="btn btn-teal" id="fx_save">حفظ</button>'
+      : '<button class="btn btn-teal" id="fx_cancel">إغلاق</button>')+'</div>'+
+  '</div></div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('fx_close').onclick=cl;
+  document.getElementById('fx_cancel').onclick=cl;
+  document.getElementById('fx_ov').onclick=function(e){ if(e.target.id==='fx_ov') cl(); };
+  if(!canEdit) return; // الزائر: اطلاع فقط
+  document.getElementById('fx_reset').onclick=function(){
+    if(!confirm('استعادة إعدادات المعادلة الافتراضية؟')) return;
+    saveIdxCfg(Object.assign({},IDX_CFG_DEFAULT)); cl(); toast('تمت الاستعادة','ok'); idxRenderAll();
+  };
+  document.getElementById('fx_save').onclick=function(){
+    var newCfg={
+      startField:document.getElementById('fx_start').value,
+      endField:document.getElementById('fx_end').value,
+      countStartDay:document.getElementById('fx_start_day').checked,
+      skipWeekend:document.getElementById('fx_we').checked,
+      skipHolidays:document.getElementById('fx_hol').checked
+    };
+    saveIdxCfg(newCfg); addLog('تعديل معادلة المؤشر',''); cl();
+    toast('تم حفظ المعادلة','ok'); idxRenderAll();
+  };
+};
+
+
+/* ═══════════════ مؤشر — تصدير إكسل ════════════════ */
+window.idxExport=function(){
+  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال','err'); return; }
+  var src=idxSourceTopics();
+  if(!src.length){ toast('لا توجد مواضيع في المؤشر للتصدير','err'); return; }
+  var wb=XLSX.utils.book_new();
+  IDX_CATEGORIES.forEach(function(cat){
+    var items=src.filter(function(t){return t.idxCategory===cat.key;});
+    if(!items.length) return;
+    var rows=items.map(function(t,i){
+      var dur=idxTopicDuration(t);
+      var ach=idxAchievement(dur, cat.target);
+      return {
+        'م': i+1,
+        'الموضوع': t.subject||'',
+        'الجهة الوارد منها': t.fromEntity||'',
+        'رقم الرسالة': t.letterNo||'',
+        'تاريخ توجيه سعادته': fmtD(t.referredDate),
+        'تاريخ إعداد الخطاب': fmtD(t.letterPrepDate),
+        'تاريخ الرد على الجهة': fmtD(t.responseDate),
+        'مدة الرد': dur===null?'':dur,
+        'المدة المستهدفة': cat.target,
+        'نسبة الإنجاز': ach===null?'':(ach+'%')
+      };
+    });
+    var ws=XLSX.utils.json_to_sheet(rows);
+    ws['!cols']=[{wch:5},{wch:40},{wch:26},{wch:12},{wch:16},{wch:16},{wch:16},{wch:10},{wch:12},{wch:12}];
+    XLSX.utils.book_append_sheet(wb, ws, cat.label.slice(0,28));
+  });
+  var d=new Date();
+  XLSX.writeFile(wb, 'مؤشر_مدة_الرد_'+d.getFullYear()+p2(d.getMonth()+1)+p2(d.getDate())+'.xlsx');
+  addLog('تصدير مؤشر إكسل', src.length+' موضوع');
+  toast('تم التصدير','ok');
+};
+
+/* ═══════════════ مؤشر — استيراد إكسل ════════════════ */
+/* دوال استيراد المؤشر القديمة أُزيلت — الاستيراد يتم من سجل الجهات الحكومية */
+
+/* ═══════════════ مؤشر — التقارير ════════════════ */
+window.idxReport=function(){
+  var html='<div class="overlay" id="rep_ov" style="align-items:flex-start;overflow-y:auto;padding:16px;">'+
+    '<div class="modal wide" style="max-height:none;">'+
+      '<div class="mh"><h3>📈 تقارير مؤشر مدة الرد</h3><button class="mc" id="rep_close">✕</button></div>'+
+      '<div class="mb" style="padding:0;">'+
+        '<div style="padding:14px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line);">'+
+          '<label style="font-size:13px;font-weight:700;">نوع التقرير:</label>'+
+          '<select id="rep_type" style="padding:7px 12px;border:1.5px solid var(--line);border-radius:8px;">'+
+            '<option value="monthly">شهري</option>'+
+            '<option value="quarterly">ربع سنوي</option>'+
+            '<option value="half">نصف سنوي</option>'+
+          '</select>'+
+          '<button class="btn btn-teal btn-sm" id="rep_gen">عرض التقرير</button>'+
+          '<button class="btn btn-outline btn-sm" id="rep_export">📊 تصدير إكسل</button>'+
+        '</div>'+
+        '<div id="rep_out" style="padding:16px;"></div>'+
+      '</div>'+
+      '<div class="mf"><button class="btn btn-outline" id="rep_ok">إغلاق</button></div>'+
+    '</div>'+
+  '</div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('rep_close').onclick=cl;
+  document.getElementById('rep_ok').onclick=cl;
+  document.getElementById('rep_ov').onclick=function(e){ if(e.target.id==='rep_ov') cl(); };
+  document.getElementById('rep_gen').onclick=function(){ idxRenderReport(document.getElementById('rep_type').value); };
+  document.getElementById('rep_export').onclick=function(){ idxExportReport(document.getElementById('rep_type').value); };
+  idxRenderReport('monthly');
+};
+
+function idxPeriodOf(dateStr, type){
+  var d=toDate(dateStr); if(!d) return null;
+  var y=d.getFullYear(), m=d.getMonth(); // 0-11
+  if(type==='monthly'){ var names=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر']; return {key:y+'-'+p2(m+1), label:names[m]+' '+y}; }
+  if(type==='quarterly'){ var q=Math.floor(m/3)+1; return {key:y+'-Q'+q, label:'الربع '+q+' '+y}; }
+  if(type==='half'){ var h=m<6?1:2; return {key:y+'-H'+h, label:(h===1?'النصف الأول':'النصف الثاني')+' '+y}; }
+  return null;
+}
+
+function idxComputeReport(type){
+  // نجمع حسب الفترة والفئة، البداية = تاريخ التوجيه
+  var cfg=loadIdxCfg();
+  var periods={}; // key -> {label, cats:{catKey:{sum,cnt}}}
+  idxSourceTopics().forEach(function(t){
+    if(!t.letterPrepDate) return;
+    var dur=idxTopicDuration(t);
+    var cat=idxCat(t.idxCategory); if(!cat) return;
+    var ach=idxAchievement(dur, cat.target);
+    if(ach===null) return;
+    var per=idxPeriodOf(t[cfg.startField], type); if(!per) return;
+    if(!periods[per.key]) periods[per.key]={label:per.label, cats:{}};
+    if(!periods[per.key].cats[t.idxCategory]) periods[per.key].cats[t.idxCategory]={sum:0,cnt:0};
+    periods[per.key].cats[t.idxCategory].sum+=ach;
+    periods[per.key].cats[t.idxCategory].cnt++;
+  });
+  return periods;
+}
+
+function idxRenderReport(type){
+  var periods=idxComputeReport(type);
+  var keys=Object.keys(periods).sort();
+  var out=document.getElementById('rep_out');
+  if(!keys.length){ out.innerHTML='<p style="text-align:center;color:var(--gray);padding:30px">لا توجد بيانات مكتملة لعرض التقرير</p>'; return; }
+  var html='';
+  keys.forEach(function(k){
+    var p=periods[k];
+    var totalSum=0,totalCnt=0;
+    var rows=IDX_CATEGORIES.map(function(cat){
+      var c=p.cats[cat.key];
+      if(!c){ return '<tr><td style="text-align:right">'+esc(cat.label)+'</td><td>—</td><td>0</td></tr>'; }
+      var avg=Math.round(c.sum/c.cnt); totalSum+=c.sum; totalCnt+=c.cnt;
+      var col=avg>=90?'#1d8349':(avg>=70?'#e67e22':'#c0392b');
+      return '<tr><td style="text-align:right">'+esc(cat.label)+'</td><td style="font-weight:700;color:'+col+'">'+avg+'%</td><td>'+c.cnt+'</td></tr>';
+    }).join('');
+    var totalAvg=totalCnt>0?Math.round(totalSum/totalCnt):0;
+    var tcol=totalAvg>=90?'#1d8349':(totalAvg>=70?'#e67e22':'#c0392b');
+    html+='<div style="margin-bottom:22px;border:1px solid var(--line);border-radius:12px;overflow:hidden;">'+
+      '<div style="background:var(--navy-d);color:#fff;padding:10px 16px;font-weight:700;display:flex;justify-content:space-between;">'+
+        '<span>'+esc(p.label)+'</span><span style="color:'+(totalAvg>=90?'#5cd3a6':'#fff')+'">الإنجاز الكلي: '+totalAvg+'%</span></div>'+
+      '<table class="dt" style="min-width:0"><thead><tr><th style="text-align:right">المؤشر</th><th>نسبة الإنجاز</th><th>عدد المواضيع</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '</div>';
+  });
+  out.innerHTML=html;
+}
+
+window.idxExportReport=function(type){
+  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل','err'); return; }
+  var periods=idxComputeReport(type);
+  var keys=Object.keys(periods).sort();
+  if(!keys.length){ toast('لا توجد بيانات','err'); return; }
+  var wb=XLSX.utils.book_new();
+  var allRows=[];
+  keys.forEach(function(k){
+    var p=periods[k]; var totalSum=0,totalCnt=0;
+    IDX_CATEGORIES.forEach(function(cat){
+      var c=p.cats[cat.key];
+      var avg=c?Math.round(c.sum/c.cnt):'';
+      if(c){ totalSum+=c.sum; totalCnt+=c.cnt; }
+      allRows.push({'الفترة':p.label,'المؤشر':cat.label,'نسبة الإنجاز':avg===''?'':avg+'%','عدد المواضيع':c?c.cnt:0});
+    });
+    allRows.push({'الفترة':p.label,'المؤشر':'الإنجاز الكلي','نسبة الإنجاز':(totalCnt?Math.round(totalSum/totalCnt):0)+'%','عدد المواضيع':totalCnt});
+    allRows.push({});
+  });
+  var ws=XLSX.utils.json_to_sheet(allRows,{skipHeader:false});
+  ws['!cols']=[{wch:20},{wch:24},{wch:14},{wch:14}];
+  var typeName=type==='monthly'?'شهري':(type==='quarterly'?'ربع_سنوي':'نصف_سنوي');
+  XLSX.utils.book_append_sheet(wb, ws, 'تقرير '+typeName);
+  XLSX.writeFile(wb, 'تقرير_مؤشر_مدة_الرد_'+typeName+'.xlsx');
+  addLog('تصدير تقرير مؤشر', typeName);
+  toast('تم تصدير التقرير','ok');
+};
+
+
+/* ═══════════════ مؤشر — تصنيف ذكي من إكسل (بدون حذف) ════════════════ */
+window.idxClassifyFromExcel=function(file){
+  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال','err'); return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
+      // نجمع من ملف المؤشر: مفتاح (رقم الرسالة/الموضوع) → {فئة, تاريخ إعداد}
+      var byNo={}, bySubj={}, totalRows=0;
+      wb.SheetNames.forEach(function(name){
+        var cat=sheetToIdxCat(name);
+        if(!cat) return; // نتجاهل ورقة الإجازات وغيرها
+        var rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,raw:true,defval:null});
+        // نجد صف الرأس
+        var hi=-1;
+        for(var r=0;r<Math.min(5,rows.length);r++){
+          var hr=rows[r]||[];
+          for(var c=0;c<hr.length;c++){ if(normH(hr[c])==='الموضوع'){ hi=r; break; } }
+          if(hi>=0) break;
+        }
+        if(hi<0) return;
+        var cm=detectCols(rows[hi]);
+        if(cm.subject===undefined) return;
+        for(var i=hi+1;i<rows.length;i++){
+          var row=rows[i]||[];
+          var subj=row[cm.subject];
+          if(subj==null||String(subj).trim()==='') continue;
+          totalRows++;
+          var no=cm.letterNo!==undefined?row[cm.letterNo]:null;
+          var prep=cm.letterPrepDate!==undefined?toDate(row[cm.letterPrepDate]):null;
+          var ref=cm.referredDate!==undefined?toDate(row[cm.referredDate]):null;
+          var rec={cat:cat, prep:prep, ref:ref};
+          if(no!=null&&String(no).trim()!==''){ byNo[String(no).trim()]=rec; }
+          bySubj[String(subj).trim().replace(/\s+/g,' ')]=rec;
+        }
+      });
+      if(!totalRows){ toast('لم توجد مواضيع في الملف. تأكدي من أسماء الأوراق (ترشيح/مراجعات/دراسة/أخرى).','err'); return; }
+
+      // نطابق مع المواضيع الحكومية الموجودة
+      var matched=0, updated=0, notFound=0;
+      var byCatCount={};
+      S.topics.forEach(function(t){
+        if(t.source!=='gov') return;
+        var hit=null;
+        if(t.letterNo!=null&&byNo[String(t.letterNo).trim()]) hit=byNo[String(t.letterNo).trim()];
+        else if(t.subject){ var k=String(t.subject).trim().replace(/\s+/g,' '); if(bySubj[k]) hit=bySubj[k]; }
+        if(hit){
+          matched++;
+          var changed=false;
+          if(hit.cat && t.idxCategory!==hit.cat){ t.idxCategory=hit.cat; changed=true; }
+          if(hit.prep && !t.letterPrepDate){ t.letterPrepDate=hit.prep; changed=true; }
+          if(hit.ref && !t.referredDate){ t.referredDate=hit.ref; changed=true; }
+          if(changed){ updated++; t.updatedAt=new Date().toISOString(); }
+          byCatCount[hit.cat]=(byCatCount[hit.cat]||0)+1;
+        }
+      });
+
+      idxClassifyReport(totalRows, matched, updated, byCatCount);
+    }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
+  };
+  reader.readAsArrayBuffer(file);
+};
+
+function idxClassifyReport(total, matched, updated, byCat){
+  var labels={tarsheeh:'ترشيح',murajaat:'مراجعات',okhra:'أخرى',dirasa:'دراسة',taqreer:'تقرير'};
+  var catLines=Object.keys(byCat).map(function(k){ return '<div style="display:flex;justify-content:space-between;padding:4px 0;"><span>'+(labels[k]||k)+'</span><b>'+byCat[k]+'</b></div>'; }).join('');
+  var html='<div class="overlay" id="cls_ov"><div class="modal" style="max-width:460px;">'+
+    '<div class="mh"><h3>🔗 نتيجة التصنيف من إكسل</h3><button class="mc" id="cls_close">✕</button></div>'+
+    '<div class="mb">'+
+      '<div style="background:var(--teal-s);border-radius:10px;padding:14px;margin-bottom:12px;font-size:13.5px;line-height:2;">'+
+        '📄 مواضيع الملف: <b>'+total+'</b><br>'+
+        '✅ طوبقت مع مواضيعك: <b>'+matched+'</b><br>'+
+        '🔄 حُدّثت (فئة/تاريخ): <b>'+updated+'</b>'+
+      '</div>'+
+      (catLines?'<div style="border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px;"><div style="font-weight:700;margin-bottom:6px;color:var(--teal)">التوزيع حسب الفئة:</div>'+catLines+'</div>':'')+
+      '<p style="font-size:12px;color:var(--gray);margin-top:12px;">لم يتم حذف أو تكرار أي موضوع — فقط تحديث الفئة وتاريخ إعداد الخطاب للمواضيع المطابقة.</p>'+
+    '</div>'+
+    '<div class="mf"><button class="btn btn-teal" id="cls_ok">تم</button></div>'+
+  '</div></div>';
+  document.getElementById('modals').innerHTML=html;
+  var done=function(){
+    save();
+    if(S.session&&S.session.role==='admin') ghPushSilent();
+    addLog('تصنيف من إكسل', matched+' موضوع طوبق، '+updated+' حُدّث');
+    closeModal();
+    renderAll();
+    var ix=document.getElementById('indexScreen'); if(ix&&!ix.classList.contains('hidden')) idxRenderAll();
+    toast('تم التصنيف: '+updated+' موضوع حُدّث','ok');
+  };
+  document.getElementById('cls_close').onclick=done;
+  document.getElementById('cls_ok').onclick=done;
 }
 
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
