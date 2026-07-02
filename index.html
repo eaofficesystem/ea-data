@@ -436,6 +436,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       <button class="btn btn-teal btn-sm" id="idxAddBtn">+ إضافة موضوع للسجل</button>
       <input type="file" id="idxImportFile" accept=".xlsx,.xls" style="display:none;">
       <button class="btn btn-outline btn-sm" id="idxClassifyBtn" style="border-color:var(--teal);color:var(--teal);">🔗 تصنيف من إكسل</button>
+      <button class="btn btn-outline btn-sm" id="idxClearUncatBtn" style="border-color:#c0392b;color:#c0392b;">🗑️ مسح غير المصنّف</button>
       <button class="btn btn-outline btn-sm" id="idxExportBtn">📊 تصدير إكسل</button>
       <button class="btn btn-outline btn-sm" id="idxReportBtn">📈 التقارير</button>
       <button class="btn btn-outline btn-sm" id="idxHolidaysBtn">📅 الإجازات</button>
@@ -695,16 +696,24 @@ function bizDays(s,e){
 }
 function dateInput(d){ var dd=toDate(d); if(!dd) return ''; return dd.getFullYear()+'-'+p2(dd.getMonth()+1)+'-'+p2(dd.getDate()); }
 
+// تصحيح السنة عند الاستيراد: بيانات المنصة كلها 2026، فأي سنة شاذة تُصحّح
+function toDateY(v){
+  var d=toDate(v); if(!d) return null;
+  var y=d.getFullYear();
+  if(y<2026||y>2026){ d=new Date(2026, d.getMonth(), d.getDate()); }
+  return d;
+}
+
 /* ═══════════════ RESPONSE CELL ════════════════ */
 function parseResp(v){
   if(v===null||v===undefined||v==='') return {status:'needsResponse',responseDate:null,raw:''};
-  if(v instanceof Date){ var d=toDate(v); return d?{status:'responded',responseDate:d,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
-  if(typeof v==='number'){ var d2=toDate(v); return d2?{status:'responded',responseDate:d2,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
+  if(v instanceof Date){ var d=toDateY(v); return d?{status:'responded',responseDate:d,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
+  if(typeof v==='number'){ var d2=toDateY(v); return d2?{status:'responded',responseDate:d2,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
   if(typeof v==='string'){
     var s=v.trim();
     if(s==='لا يحتاج رد') return {status:'noResponseNeeded',responseDate:null,raw:s};
     if(s==='يحتاج رد') return {status:'needsResponse',responseDate:null,raw:s};
-    var d3=toDate(s); if(d3) return {status:'responded',responseDate:d3,raw:''};
+    var d3=toDateY(s); if(d3) return {status:'responded',responseDate:d3,raw:''};
     return {status:'needsResponse',responseDate:null,raw:s};
   }
   return {status:'needsResponse',responseDate:null,raw:''};
@@ -856,10 +865,10 @@ function parseSheetRows(rows, srcKey, sheetCat){
       subject:String(subj).trim(),
       fromEntity:cm.fromEntity!==undefined?(row[cm.fromEntity]||''):'',
       letterNo:cm.letterNo!==undefined?(row[cm.letterNo]||''):'',
-      letterDate:cm.letterDate!==undefined?toDate(row[cm.letterDate]):null,
-      arrivalDate:cm.arrivalDate!==undefined?toDate(row[cm.arrivalDate]):null,
-      referredDate:cm.referredDate!==undefined?toDate(row[cm.referredDate]):null,
-      letterPrepDate:cm.letterPrepDate!==undefined?toDate(row[cm.letterPrepDate]):null,
+      letterDate:cm.letterDate!==undefined?toDateY(row[cm.letterDate]):null,
+      arrivalDate:cm.arrivalDate!==undefined?toDateY(row[cm.arrivalDate]):null,
+      referredDate:cm.referredDate!==undefined?toDateY(row[cm.referredDate]):null,
+      letterPrepDate:cm.letterPrepDate!==undefined?toDateY(row[cm.letterPrepDate]):null,
       idxCategory: catFromCol || sheetCat || null,
       status:resp.status, responseDate:resp.responseDate, respRaw:resp.raw,
       durationDays:durNum,
@@ -943,8 +952,8 @@ function showExcelImportChoice(allNew, counts){
           '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُضاف المواضيع الجديدة دون حذف الموجودة</div></div>'+
         '</button>'+
         '<button class="btn" id="xl_replace" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
-          '<div><div style="font-weight:800">🔄 استبدال الكل</div>'+
-          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُحذف جميع البيانات الحالية وتُستبدل بالملف الجديد</div></div>'+
+          '<div><div style="font-weight:800">🔄 استبدال (حسب نوع الملف)</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُحذف المواضيع من نفس أنواع الملف فقط، وتبقى الأنواع الأخرى</div></div>'+
         '</button>'+
       '</div>'+
     '</div>'+
@@ -965,10 +974,19 @@ function showExcelImportChoice(allNew, counts){
     finishExcelImport(allNew.length, counts, 'إضافة');
   };
   document.getElementById('xl_replace').onclick=function(){
-    if(!confirm('⚠️ سيتم حذف جميع البيانات الحالية ('+S.topics.length+' موضوع) واستبدالها بـ '+allNew.length+' موضوع.\nهل أنتِ متأكدة؟')) return;
+    // نحدد الأنواع الموجودة في الملف المستورد
+    var srcInFile={};
+    allNew.forEach(function(t){ srcInFile[t.source]=true; });
+    var srcNames={gov:'الجهات الحكومية', companies:'الشركات والمواطنين', internal:'المذكرات الداخلية'};
+    var replacedLabels=Object.keys(srcInFile).map(function(k){ return srcNames[k]||k; });
+    var kept=S.topics.filter(function(t){ return !srcInFile[t.source]; });
+    var toRemove=S.topics.length-kept.length;
+    if(!confirm('⚠️ سيتم استبدال مواضيع ('+replacedLabels.join('، ')+') فقط.\n'+
+      'سيُحذف '+toRemove+' موضوع ويُستبدل بـ '+allNew.length+' موضوع من الملف.\n'+
+      'الأنواع الأخرى ('+(kept.length)+' موضوع) تبقى كما هي.\n\nهل أنتِ متأكدة؟')) return;
     autoSnapshot('قبل استيراد إكسل (استبدال)');
-    S.topics=allNew.slice();
-    save(); addLog('استيراد إكسل','استبدال الكل بـ '+allNew.length+' موضوع'); renderAll();
+    S.topics=kept.concat(allNew);
+    save(); addLog('استيراد إكسل','استبدال '+replacedLabels.join('، ')+' بـ '+allNew.length+' موضوع'); renderAll();
     var ix2=document.getElementById('indexScreen'); if(ix2&&!ix2.classList.contains('hidden')) idxRenderAll();
     cl();
     finishExcelImport(allNew.length, counts, 'استبدال');
@@ -1662,6 +1680,8 @@ window.showIndex=function showIndex(){
   if(addBtn) addBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
   var impBtn=document.getElementById('idxClassifyBtn');
   if(impBtn) impBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
+  var clrBtn=document.getElementById('idxClearUncatBtn');
+  if(clrBtn) clrBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
   idxRenderAll();
 }
 
@@ -2036,6 +2056,7 @@ function init(){
   if(e1=document.getElementById('idxClassifyBtn')) e1.onclick=function(){ document.getElementById('idxImportFile').click(); };
   if(e1=document.getElementById('idxImportFile')) e1.onchange=function(ev){ var f=ev.target.files[0]; if(f){ idxClassifyFromExcel(f); } ev.target.value=''; };
   if(e1=document.getElementById('idxExportBtn')) e1.onclick=idxExport;
+  if(e1=document.getElementById('idxClearUncatBtn')) e1.onclick=idxClearUncat;
   if(e1=document.getElementById('idxReportBtn')) e1.onclick=idxReport;
   if(e1=document.getElementById('idxHolidaysBtn')) e1.onclick=idxHolidays;
   if(e1=document.getElementById('idxFormulaBtn')) e1.onclick=idxFormula;
@@ -2355,8 +2376,8 @@ window.idxClassifyFromExcel=function(file){
           if(subj==null||String(subj).trim()==='') continue;
           totalRows++;
           var no=cm.letterNo!==undefined?row[cm.letterNo]:null;
-          var prep=cm.letterPrepDate!==undefined?toDate(row[cm.letterPrepDate]):null;
-          var ref=cm.referredDate!==undefined?toDate(row[cm.referredDate]):null;
+          var prep=cm.letterPrepDate!==undefined?toDateY(row[cm.letterPrepDate]):null;
+          var ref=cm.referredDate!==undefined?toDateY(row[cm.referredDate]):null;
           var rec={cat:cat, prep:prep, ref:ref};
           if(no!=null&&String(no).trim()!==''){ byNo[String(no).trim()]=rec; }
           bySubj[String(subj).trim().replace(/\s+/g,' ')]=rec;
@@ -2418,6 +2439,42 @@ function idxClassifyReport(total, matched, updated, byCat){
   document.getElementById('cls_close').onclick=done;
   document.getElementById('cls_ok').onclick=done;
 }
+
+/* ═══════════════ مؤشر — مسح المواضيع غير المصنّفة ════════════════ */
+window.idxClearUncat=function(){
+  var uncat=idxSourceTopics().filter(function(t){ return !t.idxCategory || !idxCat(t.idxCategory); });
+  if(!uncat.length){ toast('لا توجد مواضيع غير مصنّفة','ok'); return; }
+  var ids={}; uncat.forEach(function(t){ ids[t.id]=true; });
+  var html='<div class="overlay" id="cu_ov"><div class="modal" style="max-width:460px;">'+
+    '<div class="mh"><h3>🗑️ مسح المواضيع غير المصنّفة</h3><button class="mc" id="cu_close">✕</button></div>'+
+    '<div class="mb">'+
+      '<p style="font-size:13.5px;color:var(--ink-soft);line-height:1.9;">يوجد <b style="color:#c0392b">'+uncat.length+'</b> موضوع حكومي غير مصنّف (بدون فئة مؤشر).<br>ماذا تريدين أن تفعلي بها؟</p>'+
+      '<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">'+
+        '<button class="btn" id="cu_del" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">🗑️ حذف نهائي من المنصة</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُحذف من السجل والمؤشر معاً — لا يمكن التراجع</div></div>'+
+        '</button>'+
+      '</div>'+
+      '<p style="font-size:11.5px;color:var(--gray);margin-top:12px;">💡 سيتم حفظ نسخة احتياطية تلقائياً قبل الحذف.</p>'+
+    '</div>'+
+    '<div class="mf"><button class="btn btn-outline" id="cu_cancel">إلغاء</button></div>'+
+  '</div></div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('cu_close').onclick=cl;
+  document.getElementById('cu_cancel').onclick=cl;
+  document.getElementById('cu_ov').onclick=function(e){ if(e.target.id==='cu_ov') cl(); };
+  document.getElementById('cu_del').onclick=function(){
+    if(!confirm('⚠️ سيتم حذف '+uncat.length+' موضوع نهائياً من المنصة.\nهل أنتِ متأكدة؟')) return;
+    autoSnapshot('قبل حذف غير المصنّف ('+uncat.length+')');
+    S.topics=S.topics.filter(function(t){ return !ids[t.id]; });
+    save();
+    if(S.session&&S.session.role==='admin') ghPushSilent();
+    addLog('حذف غير المصنّف', uncat.length+' موضوع');
+    cl(); renderAll(); idxRenderAll();
+    toast('تم حذف '+uncat.length+' موضوع','ok');
+  };
+};
 
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
 else init();
