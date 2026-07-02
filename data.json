@@ -1,6 +1,6 @@
 {
-  "version": "1.0",
-  "exportedAt": "2026-07-01T10:39:15.522Z",
+  "version": "1.1",
+  "exportedAt": "2026-07-02T04:31:56.552Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -35535,5 +35535,51 @@
       "createdBy": "admin",
       "updatedAt": "2026-06-29T09:33:28.643Z"
     }
-  ]
+  ],
+  "idxTopics": [],
+  "holidays": [
+    {
+      "date": "2026-01-15",
+      "name": "يوم تولّي السلطان مقاليد الحكم"
+    },
+    {
+      "date": "2026-01-18",
+      "name": "الإسراء والمعراج"
+    },
+    {
+      "date": "2026-03-19",
+      "name": "عيد الفطر السعيد"
+    },
+    {
+      "date": "2026-03-22",
+      "name": "عيد الفطر السعيد"
+    },
+    {
+      "date": "2026-03-23",
+      "name": "عيد الفطر السعيد"
+    },
+    {
+      "date": "2026-05-26",
+      "name": "عيد الأضحى المبارك"
+    },
+    {
+      "date": "2026-05-27",
+      "name": "عيد الأضحى المبارك"
+    },
+    {
+      "date": "2026-05-28",
+      "name": "عيد الأضحى المبارك"
+    },
+    {
+      "date": "2026-06-18",
+      "name": "رأس السنة الهجرية"
+    }
+  ],
+  "idxCfg": {
+    "startField": "referredDate",
+    "endField": "letterPrepDate",
+    "countStartDay": false,
+    "skipWeekend": true,
+    "skipHolidays": true
+  }
 }
