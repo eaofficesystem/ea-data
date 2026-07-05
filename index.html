@@ -2419,13 +2419,13 @@ window.idxClassifyFromExcel=function(file){
   reader.onload=function(e){
     try{
       var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
-      // نجمع من ملف المؤشر: مفتاح (رقم الرسالة/الموضوع) → {فئة, تاريخ إعداد}
-      var byNo={}, bySubj={}, totalRows=0;
+      // نجمع من ملف المؤشر: مفتاح (الموضوع، ورقم+جهة) → {فئة, تاريخ إعداد}
+      var bySubj={}, byNoEnt={}, totalRows=0;
+      function normTxt(s){ return String(s==null?'':s).trim().replace(/\s+/g,' '); }
       wb.SheetNames.forEach(function(name){
         var cat=sheetToIdxCat(name);
         if(!cat) return; // نتجاهل ورقة الإجازات وغيرها
         var rows=XLSX.utils.sheet_to_json(wb.Sheets[name],{header:1,raw:true,defval:null});
-        // نجد صف الرأس
         var hi=-1;
         for(var r=0;r<Math.min(5,rows.length);r++){
           var hr=rows[r]||[];
@@ -2439,25 +2439,34 @@ window.idxClassifyFromExcel=function(file){
           var row=rows[i]||[];
           var subj=row[cm.subject];
           if(subj==null||String(subj).trim()==='') continue;
+          if(String(subj).indexOf('الانجاز')>=0||String(subj).indexOf('الإنجاز')>=0) continue; // نتجاهل صفوف الفواصل
           totalRows++;
           var no=cm.letterNo!==undefined?row[cm.letterNo]:null;
+          var ent=cm.fromEntity!==undefined?row[cm.fromEntity]:null;
           var prep=cm.letterPrepDate!==undefined?toDateFix(row[cm.letterPrepDate]):null;
           var ref=cm.referredDate!==undefined?toDateFix(row[cm.referredDate]):null;
           var rec={cat:cat, prep:prep, ref:ref};
-          if(no!=null&&String(no).trim()!==''){ byNo[String(no).trim()]=rec; }
-          bySubj[String(subj).trim().replace(/\s+/g,' ')]=rec;
+          // مفتاح الاسم (الأساسي — أدق)
+          bySubj[normTxt(subj)]=rec;
+          // مفتاح رقم+جهة (احتياطي — يتجنّب تكرار الأرقام)
+          if(no!=null&&String(no).trim()!==''){ byNoEnt[normTxt(no)+'|'+normTxt(ent)]=rec; }
         }
       });
       if(!totalRows){ toast('لم توجد مواضيع في الملف. تأكدي من أسماء الأوراق (ترشيح/مراجعات/دراسة/أخرى).','err'); return; }
 
-      // نطابق مع المواضيع الحكومية الموجودة
-      var matched=0, updated=0, notFound=0;
+      // نطابق مع المواضيع الحكومية الموجودة — الاسم أولاً، ثم رقم+جهة
+      var matched=0, updated=0;
       var byCatCount={};
       S.topics.forEach(function(t){
         if(t.source!=='gov') return;
         var hit=null;
-        if(t.letterNo!=null&&byNo[String(t.letterNo).trim()]) hit=byNo[String(t.letterNo).trim()];
-        else if(t.subject){ var k=String(t.subject).trim().replace(/\s+/g,' '); if(bySubj[k]) hit=bySubj[k]; }
+        // 1) مطابقة بالاسم (الأدق)
+        if(t.subject){ var k=normTxt(t.subject); if(bySubj[k]) hit=bySubj[k]; }
+        // 2) احتياطي: رقم الرسالة + الجهة معاً
+        if(!hit && t.letterNo!=null&&String(t.letterNo).trim()!==''){
+          var ke=normTxt(t.letterNo)+'|'+normTxt(t.fromEntity);
+          if(byNoEnt[ke]) hit=byNoEnt[ke];
+        }
         if(hit){
           matched++;
           var changed=false;
@@ -2469,7 +2478,12 @@ window.idxClassifyFromExcel=function(file){
         }
       });
 
+      autoSnapshot('قبل التصنيف من إكسل');
+      save();
+      if(S.session&&S.session.role==='admin') ghPushSilent();
+      addLog('تصنيف من إكسل', matched+' موضوع طوبق، '+updated+' حُدّث');
       idxClassifyReport(totalRows, matched, updated, byCatCount);
+      renderAll(); idxRenderAll();
     }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
   };
   reader.readAsArrayBuffer(file);
