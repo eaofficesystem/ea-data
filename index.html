@@ -264,6 +264,9 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       <button class="btn btn-outline btn-sm" id="exportBtn">⬇️ إكسل</button>
       <button class="btn btn-outline btn-sm hidden" id="importBtn">📥 استيراد إكسل</button>
       <input type="file" id="importFile" accept=".xlsx,.xls" class="hidden">
+      <button class="btn btn-outline btn-sm hidden" id="mergeBtn" style="border-color:var(--teal);color:var(--teal);">🔗 استيراد ودمج (سجل + مؤشر)</button>
+      <input type="file" id="mergeRegFile" accept=".xlsx,.xls" class="hidden">
+      <input type="file" id="mergeIdxFile" accept=".xlsx,.xls" class="hidden">
       <button class="btn btn-teal btn-sm hidden" id="addBtn">+ إضافة موضوع</button>
     </div>
 
@@ -1675,6 +1678,8 @@ function applyRole(){
   var canAdd=role==='admin'||role==='editor';
   document.getElementById('addBtn').classList.toggle('hidden',!canAdd);
   document.getElementById('importBtn').classList.toggle('hidden',role!=='admin');
+  var mgB=document.getElementById('mergeBtn');
+  if(mgB) mgB.classList.toggle('hidden',role!=='admin');
   document.getElementById('syncPageBtn').classList.toggle('hidden',role!=='admin');
   var chip=document.getElementById('ghStatusChip');
   if(chip) chip.style.display=(role==='admin'?'inline-block':'none');
@@ -2097,6 +2102,12 @@ function init(){
   document.getElementById('previewBtn').onclick=doPreview;
   document.getElementById('importBtn').onclick=function(){ document.getElementById('importFile').click(); };
   document.getElementById('importFile').onchange=function(e){ var f=e.target.files[0]; if(f) importExcel(f); e.target.value=''; };
+  var mgBtn=document.getElementById('mergeBtn');
+  if(mgBtn) mgBtn.onclick=startMerge;
+  var mgReg=document.getElementById('mergeRegFile');
+  if(mgReg) mgReg.onchange=function(e){ var f=e.target.files[0]; if(f) mergeRegPicked(f); e.target.value=''; };
+  var mgIdx=document.getElementById('mergeIdxFile');
+  if(mgIdx) mgIdx.onchange=function(e){ var f=e.target.files[0]; if(f) mergeIdxPicked(f); e.target.value=''; };
   document.getElementById('backupPageBtn').onclick=showBackup;
   document.getElementById('syncPageBtn').onclick=showSync;
   document.getElementById('logBtn').onclick=openLogModal;
@@ -2411,6 +2422,164 @@ window.idxExportReport=function(type){
   toast('تم تصدير التقرير','ok');
 };
 
+
+/* ═══════════════ استيراد ودمج: سجل الوارد + مؤشر مدة الرد بضغطة واحدة ════════════════ */
+window.startMerge=function(){
+  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال','err'); return; }
+  toast('اختاري ملف سجل الوارد أولاً','ok');
+  document.getElementById('mergeRegFile').click();
+};
+
+window.mergeRegPicked=function(regFile){
+  // خزّنا ملف السجل مؤقتاً ونطلب ملف المؤشر
+  window._mergeRegFile=regFile;
+  toast('الآن اختاري ملف مؤشر مدة الرد','ok');
+  setTimeout(function(){ document.getElementById('mergeIdxFile').click(); }, 400);
+};
+
+window.mergeIdxPicked=function(idxFile){
+  var regFile=window._mergeRegFile;
+  if(!regFile){ toast('لم يُختر ملف السجل','err'); return; }
+  // نقرأ الملفين
+  var reader1=new FileReader();
+  reader1.onload=function(e1){
+    try{
+      var wbReg=XLSX.read(new Uint8Array(e1.target.result),{type:'array',cellDates:true,raw:true});
+      var reader2=new FileReader();
+      reader2.onload=function(e2){
+        try{
+          var wbIdx=XLSX.read(new Uint8Array(e2.target.result),{type:'array',cellDates:true,raw:true});
+          doMerge(wbReg, wbIdx);
+        }catch(err){ toast('خطأ في قراءة ملف المؤشر: '+err.message,'err'); }
+      };
+      reader2.readAsArrayBuffer(idxFile);
+    }catch(err){ toast('خطأ في قراءة ملف السجل: '+err.message,'err'); }
+  };
+  reader1.readAsArrayBuffer(regFile);
+  window._mergeRegFile=null;
+};
+
+function doMerge(wbReg, wbIdx){
+  function normTxt(s){ return String(s==null?'':s).trim().replace(/\s+/g,' '); }
+  // ١) نقرأ كل المواضيع من ملف السجل (كل الأوراق)
+  var allNew=[], counts={gov:0,companies:0,internal:0};
+  wbReg.SheetNames.forEach(function(name){
+    var src=sheetToSrc(name);
+    if(!src) return;
+    var rows=XLSX.utils.sheet_to_json(wbReg.Sheets[name],{header:1,raw:true,defval:null});
+    var parsed=parseSheetRows(rows, src, sheetToIdxCat(name));
+    parsed.forEach(function(t){ allNew.push(t); counts[src]=(counts[src]||0)+1; });
+  });
+  if(!allNew.length){ toast('لم توجد مواضيع في ملف السجل','err'); return; }
+
+  // ٢) نبني فهارس التصنيف من ملف المؤشر
+  var bySubj={}, byNoEnt={}, idxRows=0;
+  wbIdx.SheetNames.forEach(function(name){
+    var cat=sheetToIdxCat(name);
+    if(!cat) return;
+    var rows=XLSX.utils.sheet_to_json(wbIdx.Sheets[name],{header:1,raw:true,defval:null});
+    var hi=-1;
+    for(var r=0;r<Math.min(5,rows.length);r++){
+      var hr=rows[r]||[];
+      for(var c=0;c<hr.length;c++){ if(normH(hr[c])==='الموضوع'){ hi=r; break; } }
+      if(hi>=0) break;
+    }
+    if(hi<0) return;
+    var cm=detectCols(rows[hi]);
+    if(cm.subject===undefined) return;
+    for(var i=hi+1;i<rows.length;i++){
+      var row=rows[i]||[];
+      var subj=row[cm.subject];
+      if(subj==null||String(subj).trim()==='') continue;
+      if(String(subj).indexOf('الانجاز')>=0||String(subj).indexOf('الإنجاز')>=0) continue;
+      idxRows++;
+      var no=cm.letterNo!==undefined?row[cm.letterNo]:null;
+      var ent=cm.fromEntity!==undefined?row[cm.fromEntity]:null;
+      var prep=cm.letterPrepDate!==undefined?toDateFix(row[cm.letterPrepDate]):null;
+      var ref=cm.referredDate!==undefined?toDateFix(row[cm.referredDate]):null;
+      var rec={cat:cat, prep:prep, ref:ref};
+      bySubj[normTxt(subj)]=rec;
+      if(no!=null&&String(no).trim()!==''){ byNoEnt[normTxt(no)+'|'+normTxt(ent)]=rec; }
+    }
+  });
+
+  // ٣) الدمج: نصنّف مواضيع السجل الحكومية من فهارس المؤشر
+  var classified=0, byCatCount={};
+  allNew.forEach(function(t){
+    if(t.source!=='gov') return;
+    var hit=null;
+    if(t.subject){ var k=normTxt(t.subject); if(bySubj[k]) hit=bySubj[k]; }
+    if(!hit && t.letterNo!=null&&String(t.letterNo).trim()!==''){
+      var ke=normTxt(t.letterNo)+'|'+normTxt(t.fromEntity);
+      if(byNoEnt[ke]) hit=byNoEnt[ke];
+    }
+    if(hit){
+      classified++;
+      if(hit.cat) t.idxCategory=hit.cat;
+      if(hit.prep && !t.letterPrepDate) t.letterPrepDate=hit.prep;
+      if(hit.ref && !t.referredDate) t.referredDate=hit.ref;
+      byCatCount[hit.cat]=(byCatCount[hit.cat]||0)+1;
+    }
+  });
+
+  // ٤) نعرض نافذة التأكيد مع خيار إضافة/استبدال
+  var catLines='';
+  IDX_CATEGORIES.forEach(function(c){
+    if(byCatCount[c.key]) catLines+='<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px;"><span>'+esc(c.label)+'</span><b>'+byCatCount[c.key]+'</b></div>';
+  });
+  var html='<div class="overlay" id="mg_ov"><div class="modal" style="max-width:480px;">'+
+    '<div class="mh"><h3>🔗 استيراد ودمج</h3><button class="mc" id="mg_close">✕</button></div>'+
+    '<div class="mb">'+
+      '<p style="font-size:13.5px;line-height:1.9;">قُرئ من الملفين:</p>'+
+      '<div style="background:var(--teal-s);border-radius:10px;padding:12px 16px;margin:8px 0;">'+
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span>مواضيع السجل</span><b>'+allNew.length+'</b></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span>— حكومية</span><b>'+counts.gov+'</b></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span>— شركات ومواطنين</span><b>'+counts.companies+'</b></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;"><span>— مذكرات داخلية</span><b>'+counts.internal+'</b></div>'+
+        '<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-top:1px solid var(--line);margin-top:4px;"><span>✅ صُنّف تلقائياً من المؤشر</span><b style="color:var(--teal)">'+classified+'</b></div>'+
+        catLines+
+      '</div>'+
+      '<p style="font-size:12px;color:var(--gray);">المواضيع المصنّفة ستظهر في مؤشر مدة الرد مباشرة.</p>'+
+      '<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">'+
+        '<button class="btn btn-teal" id="mg_add" style="justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">➕ إضافة فوق الموجود</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُضاف المواضيع الجديدة مع الاحتفاظ بالحالية</div></div>'+
+        '</button>'+
+        '<button class="btn" id="mg_replace" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">🔄 استبدال (حسب نوع الملف)</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُحذف المواضيع من نفس أنواع الملف وتُستبدل بالجديدة</div></div>'+
+        '</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="mf"><button class="btn btn-outline" id="mg_cancel">إلغاء</button></div>'+
+  '</div></div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('mg_close').onclick=cl;
+  document.getElementById('mg_cancel').onclick=cl;
+  document.getElementById('mg_ov').onclick=function(e){ if(e.target.id==='mg_ov') cl(); };
+  function finishMerge(mode){
+    autoSnapshot('قبل الاستيراد والدمج ('+mode+')');
+    if(mode==='استبدال'){
+      var srcInFile={};
+      allNew.forEach(function(t){ srcInFile[t.source]=true; });
+      S.topics=S.topics.filter(function(t){ return !srcInFile[t.source]; }).concat(allNew);
+    } else {
+      S.topics=S.topics.concat(allNew);
+    }
+    save();
+    if(S.session&&S.session.role==='admin') ghPushSilent();
+    addLog('استيراد ودمج', allNew.length+' موضوع، صُنّف '+classified);
+    cl(); renderAll();
+    var ix=document.getElementById('indexScreen'); if(ix&&!ix.classList.contains('hidden')) idxRenderAll();
+    toast('تم الاستيراد والدمج: '+allNew.length+' موضوع ('+classified+' مصنّف)','ok');
+  }
+  document.getElementById('mg_add').onclick=function(){ finishMerge('إضافة'); };
+  document.getElementById('mg_replace').onclick=function(){
+    if(!confirm('⚠️ ستُستبدل المواضيع من نفس أنواع الملف. هل أنتِ متأكدة؟')) return;
+    finishMerge('استبدال');
+  };
+}
 
 /* ═══════════════ مؤشر — تصنيف ذكي من إكسل (بدون حذف) ════════════════ */
 window.idxClassifyFromExcel=function(file){
