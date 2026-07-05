@@ -617,7 +617,7 @@ function saveIdxCfg(cfg){ try{ localStorage.setItem(IDX_CFG_KEY,JSON.stringify(c
 // الفئة اختيارية: تُستخدم لنسبة الإنجاز. المواضيع بلا فئة تظهر تحت "غير مصنّف"
 function idxSourceTopics(){
   return S.topics.filter(function(t){
-    return t.source==='gov' && t.referredDate;
+    return t.source==='gov' && t.referredDate && !t.idxExcluded;
   });
 }
 
@@ -2691,19 +2691,28 @@ function idxClassifyReport(total, matched, updated, byCat){
 /* ═══════════════ مؤشر — مسح المواضيع غير المصنّفة ════════════════ */
 window.idxClearUncat=function(){
   var uncat=idxSourceTopics().filter(function(t){ return !t.idxCategory || !idxCat(t.idxCategory); });
-  if(!uncat.length){ toast('لا توجد مواضيع غير مصنّفة','ok'); return; }
+  var excluded=S.topics.filter(function(t){ return t.source==='gov' && t.idxExcluded; }).length;
+  if(!uncat.length && !excluded){ toast('لا توجد مواضيع غير مصنّفة','ok'); return; }
   var ids={}; uncat.forEach(function(t){ ids[t.id]=true; });
-  var html='<div class="overlay" id="cu_ov"><div class="modal" style="max-width:460px;">'+
+  var html='<div class="overlay" id="cu_ov"><div class="modal" style="max-width:480px;">'+
     '<div class="mh"><h3>🗑️ مسح المواضيع غير المصنّفة</h3><button class="mc" id="cu_close">✕</button></div>'+
     '<div class="mb">'+
-      '<p style="font-size:13.5px;color:var(--ink-soft);line-height:1.9;">يوجد <b style="color:#c0392b">'+uncat.length+'</b> موضوع حكومي غير مصنّف (بدون فئة مؤشر).<br>ماذا تريدين أن تفعلي بها؟</p>'+
+      '<p style="font-size:13.5px;color:var(--ink-soft);line-height:1.9;">يوجد <b style="color:#c0392b">'+uncat.length+'</b> موضوع غير مصنّف في المؤشر.</p>'+
       '<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">'+
+        '<button class="btn btn-teal" id="cu_hide" style="justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">👁️ إخفاء من المؤشر فقط</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تختفي من المؤشر وتبقى في سجل الجهات الحكومية</div></div>'+
+        '</button>'+
         '<button class="btn" id="cu_del" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
           '<div><div style="font-weight:800">🗑️ حذف نهائي من المنصة</div>'+
           '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُحذف من السجل والمؤشر معاً — لا يمكن التراجع</div></div>'+
         '</button>'+
+        (excluded>0?'<button class="btn btn-outline" id="cu_restore" style="justify-content:flex-start;padding:13px 16px;text-align:right;">'+
+          '<div><div style="font-weight:800">↩️ إرجاع المخفية للمؤشر ('+excluded+')</div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تعود المواضيع المخفية سابقاً للظهور في المؤشر</div></div>'+
+        '</button>':'')+
       '</div>'+
-      '<p style="font-size:11.5px;color:var(--gray);margin-top:12px;">💡 سيتم حفظ نسخة احتياطية تلقائياً قبل الحذف.</p>'+
+      '<p style="font-size:11.5px;color:var(--gray);margin-top:12px;">💡 سيتم حفظ نسخة احتياطية تلقائياً قبل أي تغيير.</p>'+
     '</div>'+
     '<div class="mf"><button class="btn btn-outline" id="cu_cancel">إلغاء</button></div>'+
   '</div></div>';
@@ -2712,15 +2721,38 @@ window.idxClearUncat=function(){
   document.getElementById('cu_close').onclick=cl;
   document.getElementById('cu_cancel').onclick=cl;
   document.getElementById('cu_ov').onclick=function(e){ if(e.target.id==='cu_ov') cl(); };
+  // الخيار الأساسي: إخفاء من المؤشر فقط — الموضوع يبقى في السجل
+  document.getElementById('cu_hide').onclick=function(){
+    autoSnapshot('قبل إخفاء غير المصنّف من المؤشر ('+uncat.length+')');
+    S.topics.forEach(function(t){ if(ids[t.id]){ t.idxExcluded=true; t.updatedAt=new Date().toISOString(); } });
+    save();
+    if(S.session&&S.session.role==='admin') ghPushSilent();
+    addLog('إخفاء من المؤشر', uncat.length+' موضوع (بقيت في السجل)');
+    cl(); renderAll(); idxRenderAll();
+    toast('أُخفي '+uncat.length+' موضوع من المؤشر — ما زالت في السجل','ok');
+  };
+  // الحذف النهائي (لو احتاجته)
   document.getElementById('cu_del').onclick=function(){
-    if(!confirm('⚠️ سيتم حذف '+uncat.length+' موضوع نهائياً من المنصة.\nهل أنتِ متأكدة؟')) return;
+    if(!confirm('⚠️ سيتم حذف '+uncat.length+' موضوع نهائياً من السجل والمؤشر.\nهل أنتِ متأكدة؟')) return;
     autoSnapshot('قبل حذف غير المصنّف ('+uncat.length+')');
     S.topics=S.topics.filter(function(t){ return !ids[t.id]; });
     save();
     if(S.session&&S.session.role==='admin') ghPushSilent();
     addLog('حذف غير المصنّف', uncat.length+' موضوع');
     cl(); renderAll(); idxRenderAll();
-    toast('تم حذف '+uncat.length+' موضوع','ok');
+    toast('تم حذف '+uncat.length+' موضوع نهائياً','ok');
+  };
+  // إرجاع المخفية
+  var restBtn=document.getElementById('cu_restore');
+  if(restBtn) restBtn.onclick=function(){
+    autoSnapshot('قبل إرجاع المخفية للمؤشر');
+    var n=0;
+    S.topics.forEach(function(t){ if(t.source==='gov'&&t.idxExcluded){ delete t.idxExcluded; t.updatedAt=new Date().toISOString(); n++; } });
+    save();
+    if(S.session&&S.session.role==='admin') ghPushSilent();
+    addLog('إرجاع للمؤشر', n+' موضوع');
+    cl(); renderAll(); idxRenderAll();
+    toast('أُرجع '+n+' موضوع للمؤشر','ok');
   };
 };
 
