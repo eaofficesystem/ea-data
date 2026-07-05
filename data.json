@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-05T06:35:55.095Z",
+  "exportedAt": "2026-07-05T06:40:13.773Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -3580,14 +3580,14 @@
       "source": "gov",
       "subject": "البرنامج الوطني للتحول الرقمي الحكومي",
       "fromEntity": "الامانة العامة لمجلس الوزراء",
-      "letterNo": 405,
-      "letterDate": "2026-01-28T20:00:00.000Z",
-      "arrivalDate": "2026-02-02T20:00:00.000Z",
-      "referredDate": "2026-02-02T20:00:00.000Z",
-      "letterPrepDate": "2026-02-15T20:00:00.000Z",
+      "letterNo": "405",
+      "letterDate": "2026-01-29T00:00:00.000Z",
+      "arrivalDate": "2026-02-04T00:00:00.000Z",
+      "referredDate": "2026-02-04T00:00:00.000Z",
+      "letterPrepDate": "2026-02-16T00:00:00.000Z",
       "idxCategory": "okhra",
       "status": "responded",
-      "responseDate": "2026-02-16T20:00:00.000Z",
+      "responseDate": "2026-02-17T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 6,
       "content": "",
@@ -3595,7 +3595,7 @@
       "notes": "",
       "createdAt": "2026-07-05T06:03:00.473Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-05T06:03:00.473Z"
+      "updatedAt": "2026-07-05T06:40:11.755Z"
     },
     {
       "id": "t_mr7dx795_nu3as",
