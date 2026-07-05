@@ -265,6 +265,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       <button class="btn btn-outline btn-sm hidden" id="importBtn">📥 استيراد إكسل</button>
       <input type="file" id="importFile" accept=".xlsx,.xls" class="hidden">
       <button class="btn btn-outline btn-sm hidden" id="mergeBtn" style="border-color:var(--teal);color:var(--teal);">🔗 استيراد ودمج (سجل + مؤشر)</button>
+      <button class="btn btn-outline btn-sm hidden" id="wipeAllBtn" style="border-color:#c0392b;color:#c0392b;">🗑️ مسح كل المواضيع</button>
       <input type="file" id="mergeRegFile" accept=".xlsx,.xls" class="hidden">
       <input type="file" id="mergeIdxFile" accept=".xlsx,.xls" class="hidden">
       <button class="btn btn-teal btn-sm hidden" id="addBtn">+ إضافة موضوع</button>
@@ -918,8 +919,7 @@ function sheetToSrc(name){
   if(n.indexOf('حكوم')>=0) return 'gov';
   if(n.indexOf('شركات')>=0||n.indexOf('مواطن')>=0) return 'companies';
   if(n.indexOf('مذكر')>=0||n.indexOf('داخلي')>=0) return 'internal';
-  // أوراق مؤشر مدة الرد (كل ورقة = فئة، وكلها جهات حكومية)
-  if(sheetToIdxCat(n)) return 'gov';
+  // أوراق فئات المؤشر لا تُستورد كمواضيع — التصنيف عبر زر التصنيف أو الدمج فقط
   return null;
 }
 // كشف فئة المؤشر من اسم الورقة (ملف مؤشر مدة الرد)
@@ -939,6 +939,14 @@ function importExcel(file){
     try{
       var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
       if(!wb.SheetNames||!wb.SheetNames.length){ toast('الملف لا يحتوي أوراق','err'); return; }
+      // حماية: لو الملف ملف مؤشر مدة الرد (فيه أوراق فئات)، نصنّف بدل الإضافة — لا مواضيع جديدة
+      var catSheets=wb.SheetNames.filter(function(n){ return sheetToIdxCat(n); });
+      if(catSheets.length>=2){
+        if(confirm('هذا ملف مؤشر مدة الرد (فيه أوراق فئات).\nسيتم تصنيف المواضيع الموجودة فقط — لن تُضاف مواضيع جديدة.\nمتابعة؟')){
+          idxClassifyFromWorkbook(wb);
+        }
+        return;
+      }
       var allNew=[]; var counts={gov:0,companies:0,internal:0};
       var skipped=[];
       wb.SheetNames.forEach(function(name){
@@ -1680,6 +1688,8 @@ function applyRole(){
   document.getElementById('importBtn').classList.toggle('hidden',role!=='admin');
   var mgB=document.getElementById('mergeBtn');
   if(mgB) mgB.classList.toggle('hidden',role!=='admin');
+  var wpB=document.getElementById('wipeAllBtn');
+  if(wpB) wpB.classList.toggle('hidden',role!=='admin');
   document.getElementById('syncPageBtn').classList.toggle('hidden',role!=='admin');
   var chip=document.getElementById('ghStatusChip');
   if(chip) chip.style.display=(role==='admin'?'inline-block':'none');
@@ -1860,7 +1870,7 @@ function idxRenderTable(){
       '<td>'+catTxt+'</td>'+
       '<td style="font-weight:700">'+durTxt+'</td>'+
       '<td style="font-weight:700;color:'+achColor+'">'+achTxt+'</td>'+
-      (canEdit?'<td><button class="btn btn-outline btn-sm" onclick="idxOpenTopic(\''+t.id+'\')">تعديل</button></td>':'')+
+      (canEdit?'<td style="white-space:nowrap"><button class="btn btn-outline btn-sm" onclick="idxOpenTopic(\''+t.id+'\')">تعديل</button> <button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="idxDeleteTopic(\''+t.id+'\')">مسح</button></td>':'')+
     '</tr>';
   }).join('');
   el.innerHTML=head+'<tbody>'+rows+'</tbody>';
@@ -1880,6 +1890,35 @@ window.idxOpenTopic=function(id){
   var t=S.topics.filter(function(x){return x.id===id;})[0];
   if(!t){ toast('الموضوع غير موجود','err'); return; }
   openTopicModal(t, false);
+};
+
+/* مسح كل المواضيع من المنصة — تحكم كامل لإعادة الإضافة */
+window.wipeAllTopics=function(){
+  var n=S.topics.length;
+  if(!n){ toast('لا توجد مواضيع للمسح','ok'); return; }
+  if(!confirm('⚠️ سيتم مسح كل المواضيع من المنصة ('+n+' موضوع) — الحكومية والشركات والمذكرات.\nسيتم حفظ نسخة احتياطية تلقائياً قبل المسح.\n\nهل أنتِ متأكدة؟')) return;
+  if(!confirm('تأكيد أخير: مسح '+n+' موضوع نهائياً؟')) return;
+  autoSnapshot('قبل مسح كل المواضيع ('+n+')');
+  S.topics=[];
+  save();
+  if(S.session&&S.session.role==='admin') ghPushSilent();
+  addLog('مسح كل المواضيع', n+' موضوع');
+  renderAll();
+  var ix=document.getElementById('indexScreen'); if(ix&&!ix.classList.contains('hidden')) idxRenderAll();
+  toast('تم مسح '+n+' موضوع — المنصة فاضية وجاهزة للاستيراد','ok');
+};
+
+window.idxDeleteTopic=function(id){
+  var t=S.topics.filter(function(x){return x.id===id;})[0];
+  if(!t){ toast('الموضوع غير موجود','err'); return; }
+  if(!confirm('⚠️ حذف الموضوع نهائياً من المنصة؟\n«'+(t.subject||'').slice(0,60)+'»')) return;
+  autoSnapshot('قبل حذف موضوع من المؤشر');
+  S.topics=S.topics.filter(function(x){ return x.id!==id; });
+  save();
+  if(S.session&&S.session.role==='admin') ghPushSilent();
+  addLog('حذف موضوع', (t.subject||'').slice(0,50));
+  renderAll(); idxRenderAll();
+  toast('تم حذف الموضوع','ok');
 };
 
 function fmtD(v){ var d=toDate(v); if(!d) return '—'; return p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear(); }
@@ -2104,6 +2143,8 @@ function init(){
   document.getElementById('importFile').onchange=function(e){ var f=e.target.files[0]; if(f) importExcel(f); e.target.value=''; };
   var mgBtn=document.getElementById('mergeBtn');
   if(mgBtn) mgBtn.onclick=startMerge;
+  var wipeBtn=document.getElementById('wipeAllBtn');
+  if(wipeBtn) wipeBtn.onclick=wipeAllTopics;
   var mgReg=document.getElementById('mergeRegFile');
   if(mgReg) mgReg.onchange=function(e){ var f=e.target.files[0]; if(f) mergeRegPicked(f); e.target.value=''; };
   var mgIdx=document.getElementById('mergeIdxFile');
@@ -2614,13 +2655,8 @@ function doMerge(wbReg, wbIdx){
   };
 }
 
-/* ═══════════════ مؤشر — تصنيف ذكي من إكسل (بدون حذف) ════════════════ */
-window.idxClassifyFromExcel=function(file){
-  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال','err'); return; }
-  var reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
+/* ═══════════════ مؤشر — تصنيف ذكي من إكسل (بدون حذف ولا إضافة) ════════════════ */
+window.idxClassifyFromWorkbook=function(wb){
       // نجمع من ملف المؤشر: مفتاح (الموضوع، ورقم+جهة) → {فئة, تاريخ إعداد}
       var bySubj={}, byNoEnt={}, totalRows=0;
       function normTxt(s){ return String(s==null?'':s).trim().replace(/\s+/g,' '); }
@@ -2686,6 +2722,15 @@ window.idxClassifyFromExcel=function(file){
       addLog('تصنيف من إكسل', matched+' موضوع طوبق، '+updated+' حُدّث');
       idxClassifyReport(totalRows, matched, updated, byCatCount);
       renderAll(); idxRenderAll();
+};
+
+window.idxClassifyFromExcel=function(file){
+  if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال','err'); return; }
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
+      idxClassifyFromWorkbook(wb);
     }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
   };
   reader.readAsArrayBuffer(file);
