@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-05T10:10:17.308Z",
+  "exportedAt": "2026-07-05T10:11:49.343Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -2219,8 +2219,8 @@
       "subject": "جداول المواقف المنفردة للدول الاعضاء على ملاحظات الحذف من قائمة السلع المقيدة المشتركة",
       "fromEntity": "شرطة عمان السلطانية",
       "letterNo": "329",
-      "letterDate": "2026-01-22T00:00:00.000Z",
-      "arrivalDate": "2026-01-22T00:00:00.000Z",
+      "letterDate": "2026-03-04T00:00:00.000Z",
+      "arrivalDate": "2026-03-04T00:00:00.000Z",
       "referredDate": "2026-03-04T00:00:00.000Z",
       "letterPrepDate": "2026-03-05T00:00:00.000Z",
       "idxCategory": "murajaat",
@@ -2233,7 +2233,7 @@
       "notes": "",
       "createdAt": "2026-07-05T10:08:29.841Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-05T10:10:15.291Z"
+      "updatedAt": "2026-07-05T10:11:47.315Z"
     },
     {
       "id": "t_mr7mowi9_c8ad6",
