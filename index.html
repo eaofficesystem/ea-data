@@ -2426,37 +2426,70 @@ window.idxExportReport=function(type){
 /* ═══════════════ استيراد ودمج: سجل الوارد + مؤشر مدة الرد بضغطة واحدة ════════════════ */
 window.startMerge=function(){
   if(typeof XLSX==='undefined'){ toast('مكتبة الإكسل لم تُحمّل — تحققي من الاتصال','err'); return; }
-  toast('اختاري ملف سجل الوارد أولاً','ok');
-  document.getElementById('mergeRegFile').click();
+  window._mergeReg=null; window._mergeIdx=null;
+  var html='<div class="overlay" id="ms_ov"><div class="modal" style="max-width:460px;">'+
+    '<div class="mh"><h3>🔗 استيراد ودمج</h3><button class="mc" id="ms_close">✕</button></div>'+
+    '<div class="mb">'+
+      '<p style="font-size:13px;color:var(--ink-soft);line-height:1.8;">اختاري الملفين، وسيتم دمجهما تلقائياً: المواضيع من السجل + التصنيف من المؤشر.</p>'+
+      '<div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">'+
+        '<button class="btn btn-outline" id="ms_pickReg" style="justify-content:space-between;padding:13px 16px;width:100%;">'+
+          '<span style="font-weight:700">١· ملف سجل الوارد</span><span id="ms_regName" style="font-size:11.5px;color:var(--gray)">لم يُختر</span>'+
+        '</button>'+
+        '<button class="btn btn-outline" id="ms_pickIdx" style="justify-content:space-between;padding:13px 16px;width:100%;">'+
+          '<span style="font-weight:700">٢· ملف مؤشر مدة الرد</span><span id="ms_idxName" style="font-size:11.5px;color:var(--gray)">لم يُختر</span>'+
+        '</button>'+
+      '</div>'+
+    '</div>'+
+    '<div class="mf"><button class="btn btn-outline" id="ms_cancel">إلغاء</button>'+
+    '<button class="btn btn-teal" id="ms_go" disabled style="opacity:.5">دمج الملفين</button></div>'+
+  '</div></div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('ms_close').onclick=cl;
+  document.getElementById('ms_cancel').onclick=cl;
+  document.getElementById('ms_ov').onclick=function(e){ if(e.target.id==='ms_ov') cl(); };
+  function refreshGo(){
+    var go=document.getElementById('ms_go');
+    if(!go) return;
+    var ready=!!(window._mergeReg&&window._mergeIdx);
+    go.disabled=!ready; go.style.opacity=ready?'1':'.5';
+  }
+  document.getElementById('ms_pickReg').onclick=function(){ document.getElementById('mergeRegFile').click(); };
+  document.getElementById('ms_pickIdx').onclick=function(){ document.getElementById('mergeIdxFile').click(); };
+  window._msRefresh=refreshGo;
+  document.getElementById('ms_go').onclick=function(){
+    var regFile=window._mergeReg, idxFile=window._mergeIdx;
+    if(!regFile||!idxFile){ toast('اختاري الملفين أولاً','err'); return; }
+    var reader1=new FileReader();
+    reader1.onload=function(e1){
+      try{
+        var wbReg=XLSX.read(new Uint8Array(e1.target.result),{type:'array',cellDates:true,raw:true});
+        var reader2=new FileReader();
+        reader2.onload=function(e2){
+          try{
+            var wbIdx=XLSX.read(new Uint8Array(e2.target.result),{type:'array',cellDates:true,raw:true});
+            doMerge(wbReg, wbIdx);
+          }catch(err){ toast('خطأ في قراءة ملف المؤشر: '+err.message,'err'); }
+        };
+        reader2.readAsArrayBuffer(idxFile);
+      }catch(err){ toast('خطأ في قراءة ملف السجل: '+err.message,'err'); }
+    };
+    reader1.readAsArrayBuffer(regFile);
+  };
 };
 
 window.mergeRegPicked=function(regFile){
-  // خزّنا ملف السجل مؤقتاً ونطلب ملف المؤشر
-  window._mergeRegFile=regFile;
-  toast('الآن اختاري ملف مؤشر مدة الرد','ok');
-  setTimeout(function(){ document.getElementById('mergeIdxFile').click(); }, 400);
+  window._mergeReg=regFile;
+  var el=document.getElementById('ms_regName');
+  if(el){ el.textContent='✅ '+regFile.name.slice(0,26); el.style.color='var(--teal)'; }
+  if(window._msRefresh) window._msRefresh();
 };
 
 window.mergeIdxPicked=function(idxFile){
-  var regFile=window._mergeRegFile;
-  if(!regFile){ toast('لم يُختر ملف السجل','err'); return; }
-  // نقرأ الملفين
-  var reader1=new FileReader();
-  reader1.onload=function(e1){
-    try{
-      var wbReg=XLSX.read(new Uint8Array(e1.target.result),{type:'array',cellDates:true,raw:true});
-      var reader2=new FileReader();
-      reader2.onload=function(e2){
-        try{
-          var wbIdx=XLSX.read(new Uint8Array(e2.target.result),{type:'array',cellDates:true,raw:true});
-          doMerge(wbReg, wbIdx);
-        }catch(err){ toast('خطأ في قراءة ملف المؤشر: '+err.message,'err'); }
-      };
-      reader2.readAsArrayBuffer(idxFile);
-    }catch(err){ toast('خطأ في قراءة ملف السجل: '+err.message,'err'); }
-  };
-  reader1.readAsArrayBuffer(regFile);
-  window._mergeRegFile=null;
+  window._mergeIdx=idxFile;
+  var el=document.getElementById('ms_idxName');
+  if(el){ el.textContent='✅ '+idxFile.name.slice(0,26); el.style.color='var(--teal)'; }
+  if(window._msRefresh) window._msRefresh();
 };
 
 function doMerge(wbReg, wbIdx){
