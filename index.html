@@ -248,6 +248,15 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
         <option value="amber">قارب الانتهاء</option>
         <option value="red">متأخر</option>
       </select>
+      <select class="fsel" id="sortSelect" title="ترتيب المواضيع">
+        <option value="arrival_asc">الوصول: الأقدم أولاً</option>
+        <option value="arrival_desc">الوصول: الأحدث أولاً</option>
+        <option value="referred_asc">التوجيه: الأقدم أولاً</option>
+        <option value="referred_desc">التوجيه: الأحدث أولاً</option>
+        <option value="status">الحالة: يحتاج رد أولاً</option>
+        <option value="letterNo">رقم الرسالة</option>
+        <option value="entity">الجهة (أبجدي)</option>
+      </select>
       <div class="tb-gap"></div>
       <button class="btn btn-outline btn-sm" id="previewBtn">👁️ معاينة</button>
       <button class="btn btn-outline btn-sm" id="wordBtn">📄 Word</button>
@@ -441,6 +450,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       <button class="btn btn-outline btn-sm" id="idxReportBtn">📈 التقارير</button>
       <button class="btn btn-outline btn-sm" id="idxHolidaysBtn">📅 الإجازات</button>
       <button class="btn btn-outline btn-sm" id="idxFormulaBtn">⚙️ المعادلة</button>
+      <button class="btn btn-outline btn-sm" id="idxManageBtn">📐 إدارة المؤشرات</button>
       <div style="flex:1;min-width:150px;">
         <input type="text" id="idxSearch" placeholder="🔍 بحث بالموضوع أو الجهة" style="width:100%;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;">
       </div>
@@ -544,14 +554,25 @@ var IDX_SK      = 'incoming_idx_v1';       // مواضيع المؤشر
 var IDX_HOL_KEY = 'incoming_holidays_v1';  // الإجازات الرسمية
 var IDX_CFG_KEY = 'incoming_idxcfg_v1';    // إعدادات المعادلة
 
-// الفئات المعتمدة ومددها المستهدفة (بالأيام)
-var IDX_CATEGORIES = [
+// الفئات المعتمدة ومددها المستهدفة (بالأيام) — قابلة للتعديل والإضافة
+var IDX_CAT_KEY = 'incoming_idxcats_v1';
+var IDX_CATEGORIES_DEFAULT = [
   { key:'tarsheeh',   label:'سرعة الرد بترشيح',  target:2  },
   { key:'murajaat',   label:'سرعة الرد بمراجعات', target:3  },
   { key:'okhra',      label:'أخرى',              target:5  },
   { key:'dirasa',     label:'سرعة الرد بدراسة',  target:14 },
   { key:'taqreer',    label:'سرعة الرد بتقرير',  target:14 }
 ];
+var IDX_CATEGORIES = loadIdxCats();
+function loadIdxCats(){
+  try{ var r=localStorage.getItem(IDX_CAT_KEY); if(r){ var p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } }catch(e){}
+  return IDX_CATEGORIES_DEFAULT.map(function(c){ return {key:c.key,label:c.label,target:c.target}; });
+}
+function saveIdxCats(list){
+  IDX_CATEGORIES=list;
+  try{ localStorage.setItem(IDX_CAT_KEY,JSON.stringify(list)); }catch(e){}
+  if(S.session && S.session.role==='admin') ghPushSilent();
+}
 function idxCat(key){ for(var i=0;i<IDX_CATEGORIES.length;i++){ if(IDX_CATEGORIES[i].key===key) return IDX_CATEGORIES[i]; } return null; }
 
 // الإجازات الرسمية الافتراضية (النصف الأول 2026) — قابلة للتعديل والإضافة
@@ -655,7 +676,7 @@ var S = {
   topics: [],
   session: null,
   src: 'gov',
-  q: '', statusF: '', kpiF: '',
+  q: '', statusF: '', kpiF: '', sortBy: 'arrival_asc',
   page: 1,
   idxTopics: [],       // مواضيع مؤشر مدة الرد
   idxCat: 'tarsheeh',  // الفئة المختارة في المؤشر
@@ -678,13 +699,23 @@ function toDate(v){
   }
   if(typeof v==='string'){
     var s=v.trim(); if(!s) return null;
+    // صيغة يوم/شهر/سنة (نصية)
     var m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
     if(m) return new Date(+m[3],+m[2]-1,+m[1]);
+    // صيغة ISO (سنة-شهر-يوم) — نقرأ الأجزاء مباشرة لتفادي انزياح التوقيت
+    var iso=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
+    if(iso) return new Date(+iso[1],+iso[2]-1,+iso[3]);
     var d2=new Date(s); return isNaN(d2)?null:new Date(d2.getFullYear(),d2.getMonth(),d2.getDate());
   }
   return null;
 }
 function fmt(v){ var d=toDate(v); if(!d) return '—'; return p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear(); }
+// تصحيح الاستيراد: السنوات المستقبلية الغلط (2027 فأكثر) تُصحّح لـ 2026. تبقى 2025 و2026 كما هي.
+function toDateFix(v){
+  var d=toDate(v); if(!d) return null;
+  if(d.getFullYear()>2026){ return new Date(2026, d.getMonth(), d.getDate()); }
+  return d;
+}
 function today(){ var n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
 function isWknd(d){ var w=d.getDay(); return w===5||w===6; }
 function bizDays(s,e){
@@ -696,24 +727,16 @@ function bizDays(s,e){
 }
 function dateInput(d){ var dd=toDate(d); if(!dd) return ''; return dd.getFullYear()+'-'+p2(dd.getMonth()+1)+'-'+p2(dd.getDate()); }
 
-// تصحيح السنة عند الاستيراد: بيانات المنصة كلها 2026، فأي سنة شاذة تُصحّح
-function toDateY(v){
-  var d=toDate(v); if(!d) return null;
-  var y=d.getFullYear();
-  if(y<2026||y>2026){ d=new Date(2026, d.getMonth(), d.getDate()); }
-  return d;
-}
-
 /* ═══════════════ RESPONSE CELL ════════════════ */
 function parseResp(v){
   if(v===null||v===undefined||v==='') return {status:'needsResponse',responseDate:null,raw:''};
-  if(v instanceof Date){ var d=toDateY(v); return d?{status:'responded',responseDate:d,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
-  if(typeof v==='number'){ var d2=toDateY(v); return d2?{status:'responded',responseDate:d2,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
+  if(v instanceof Date){ var d=toDateFix(v); return d?{status:'responded',responseDate:d,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
+  if(typeof v==='number'){ var d2=toDateFix(v); return d2?{status:'responded',responseDate:d2,raw:''}:{status:'needsResponse',responseDate:null,raw:''}; }
   if(typeof v==='string'){
     var s=v.trim();
     if(s==='لا يحتاج رد') return {status:'noResponseNeeded',responseDate:null,raw:s};
     if(s==='يحتاج رد') return {status:'needsResponse',responseDate:null,raw:s};
-    var d3=toDateY(s); if(d3) return {status:'responded',responseDate:d3,raw:''};
+    var d3=toDateFix(s); if(d3) return {status:'responded',responseDate:d3,raw:''};
     return {status:'needsResponse',responseDate:null,raw:s};
   }
   return {status:'needsResponse',responseDate:null,raw:''};
@@ -763,6 +786,7 @@ async function loadFromGitHub(){
     }
     if(Array.isArray(imported.holidays)){ saveHolidays(imported.holidays); }
     if(imported.idxCfg){ saveIdxCfg(imported.idxCfg); }
+    if(Array.isArray(imported.idxCats)&&imported.idxCats.length){ IDX_CATEGORIES=imported.idxCats; try{ localStorage.setItem(IDX_CAT_KEY,JSON.stringify(imported.idxCats)); }catch(e){} }
     if(!topics.length){
       // حتى لو ما فيه مواضيع رئيسية، حدّث المؤشر لو ظاهر
       var ixScr=document.getElementById('indexScreen');
@@ -865,10 +889,10 @@ function parseSheetRows(rows, srcKey, sheetCat){
       subject:String(subj).trim(),
       fromEntity:cm.fromEntity!==undefined?(row[cm.fromEntity]||''):'',
       letterNo:cm.letterNo!==undefined?(row[cm.letterNo]||''):'',
-      letterDate:cm.letterDate!==undefined?toDateY(row[cm.letterDate]):null,
-      arrivalDate:cm.arrivalDate!==undefined?toDateY(row[cm.arrivalDate]):null,
-      referredDate:cm.referredDate!==undefined?toDateY(row[cm.referredDate]):null,
-      letterPrepDate:cm.letterPrepDate!==undefined?toDateY(row[cm.letterPrepDate]):null,
+      letterDate:cm.letterDate!==undefined?toDateFix(row[cm.letterDate]):null,
+      arrivalDate:cm.arrivalDate!==undefined?toDateFix(row[cm.arrivalDate]):null,
+      referredDate:cm.referredDate!==undefined?toDateFix(row[cm.referredDate]):null,
+      letterPrepDate:cm.letterPrepDate!==undefined?toDateFix(row[cm.letterPrepDate]):null,
       idxCategory: catFromCol || sheetCat || null,
       status:resp.status, responseDate:resp.responseDate, respRaw:resp.raw,
       durationDays:durNum,
@@ -1007,10 +1031,41 @@ function filtered(){
   }); }
   if(S.statusF) list=list.filter(function(t){ return t.status===S.statusF; });
   if(S.kpiF) list=list.filter(function(t){ return kpi(t).bucket===S.kpiF; });
+  var sb=S.sortBy||'arrival_asc';
+  var stOrder={needsResponse:0, responded:1, noResponseNeeded:2};
   list.sort(function(a,b){
-    var ad=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
-    var bd=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
-    return bd-ad;
+    switch(sb){
+      case 'arrival_desc': {
+        var a1=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
+        var b1=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
+        return b1-a1;
+      }
+      case 'referred_asc': {
+        var a2=toDate(a.referredDate)||new Date(0);
+        var b2=toDate(b.referredDate)||new Date(0);
+        return a2-b2;
+      }
+      case 'referred_desc': {
+        var a3=toDate(a.referredDate)||new Date(0);
+        var b3=toDate(b.referredDate)||new Date(0);
+        return b3-a3;
+      }
+      case 'status': {
+        var sa=stOrder[a.status]!==undefined?stOrder[a.status]:9;
+        var sbb=stOrder[b.status]!==undefined?stOrder[b.status]:9;
+        return sa-sbb;
+      }
+      case 'letterNo':
+        return String(a.letterNo||'').localeCompare(String(b.letterNo||''),'ar',{numeric:true});
+      case 'entity':
+        return String(a.fromEntity||'').localeCompare(String(b.fromEntity||''),'ar');
+      case 'arrival_asc':
+      default: {
+        var a0=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
+        var b0=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
+        return a0-b0;
+      }
+    }
   });
   return list;
 }
@@ -1738,7 +1793,7 @@ function idxRenderKPI(){
 
 function idxFiltered(){
   var q=(S.idxQ||'').trim();
-  return idxSourceTopics().filter(function(t){
+  var list=idxSourceTopics().filter(function(t){
     if(S.idxCat==='uncat'){
       if(t.idxCategory && idxCat(t.idxCategory)) return false; // له فئة → مو غير مصنّف
     } else {
@@ -1750,6 +1805,13 @@ function idxFiltered(){
     }
     return true;
   });
+  // نفس ترتيب السجل: الأقدم أولاً حسب تاريخ الوصول
+  list.sort(function(a,b){
+    var ad=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
+    var bd=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
+    return ad-bd;
+  });
+  return list;
 }
 
 function idxRenderTable(){
@@ -1954,7 +2016,7 @@ window.uploadToGitHub=async function uploadToGitHub(){
 async function ghPut(cfg, retry){
   try{
     var payload={version:'1.1',exportedAt:new Date().toISOString(),exportedBy:S.session?S.session.username:'',topics:S.topics,
-      idxTopics:S.idxTopics, holidays:loadHolidays(), idxCfg:loadIdxCfg()};
+      idxTopics:S.idxTopics, holidays:loadHolidays(), idxCfg:loadIdxCfg(), idxCats:IDX_CATEGORIES};
     var contentB64=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
     var fileUrl='https://api.github.com/repos/'+cfg.user+'/'+cfg.repo+'/contents/'+GH_DATA_FILE;
     // اجلب آخر SHA طازج (بدون كاش)
@@ -2027,6 +2089,8 @@ function init(){
   document.getElementById('searchInput').oninput=function(e){ S.q=e.target.value; S.page=1; renderTable(); };
   document.getElementById('statusFilter').onchange=function(e){ S.statusF=e.target.value; S.page=1; renderTable(); };
   document.getElementById('kpiFilter').onchange=function(e){ S.kpiF=e.target.value; S.page=1; renderTable(); };
+  var sortSel=document.getElementById('sortSelect');
+  if(sortSel) sortSel.onchange=function(e){ S.sortBy=e.target.value; S.page=1; renderTable(); };
   document.getElementById('exportBtn').onclick=exportExcel;
   document.getElementById('printBtn').onclick=doPrint;
   document.getElementById('wordBtn').onclick=doWord;
@@ -2060,6 +2124,7 @@ function init(){
   if(e1=document.getElementById('idxReportBtn')) e1.onclick=idxReport;
   if(e1=document.getElementById('idxHolidaysBtn')) e1.onclick=idxHolidays;
   if(e1=document.getElementById('idxFormulaBtn')) e1.onclick=idxFormula;
+  if(e1=document.getElementById('idxManageBtn')) e1.onclick=idxManage;
   if(e1=document.getElementById('idxLogoutBtn')) e1.onclick=function(){ if(confirm('تسجيل الخروج؟')){ showMain(); doLogout(); }};
 
   if(S.session){
@@ -2376,8 +2441,8 @@ window.idxClassifyFromExcel=function(file){
           if(subj==null||String(subj).trim()==='') continue;
           totalRows++;
           var no=cm.letterNo!==undefined?row[cm.letterNo]:null;
-          var prep=cm.letterPrepDate!==undefined?toDateY(row[cm.letterPrepDate]):null;
-          var ref=cm.referredDate!==undefined?toDateY(row[cm.referredDate]):null;
+          var prep=cm.letterPrepDate!==undefined?toDateFix(row[cm.letterPrepDate]):null;
+          var ref=cm.referredDate!==undefined?toDateFix(row[cm.referredDate]):null;
           var rec={cat:cat, prep:prep, ref:ref};
           if(no!=null&&String(no).trim()!==''){ byNo[String(no).trim()]=rec; }
           bySubj[String(subj).trim().replace(/\s+/g,' ')]=rec;
@@ -2473,6 +2538,98 @@ window.idxClearUncat=function(){
     addLog('حذف غير المصنّف', uncat.length+' موضوع');
     cl(); renderAll(); idxRenderAll();
     toast('تم حذف '+uncat.length+' موضوع','ok');
+  };
+};
+
+/* ═══════════════ مؤشر — إدارة المؤشرات (الفئات) ════════════════ */
+window.idxManage=function(){
+  var canEdit = S.session && (S.session.role==='admin'||S.session.role==='editor');
+  function countFor(key){ return idxSourceTopics().filter(function(t){ return t.idxCategory===key; }).length; }
+  function rowHtml(c,i){
+    var n=countFor(c.key);
+    if(!canEdit){
+      return '<tr><td style="text-align:right">'+esc(c.label)+'</td><td style="text-align:center">'+c.target+' يوم</td><td style="text-align:center">'+n+'</td></tr>';
+    }
+    return '<tr>'+
+      '<td><input type="text" value="'+esc(c.label)+'" data-i="'+i+'" class="cat-label" style="padding:6px;border:1px solid var(--line);border-radius:6px;width:100%"></td>'+
+      '<td><input type="number" min="1" value="'+c.target+'" data-i="'+i+'" class="cat-target" style="padding:6px;border:1px solid var(--line);border-radius:6px;width:70px;text-align:center"></td>'+
+      '<td style="text-align:center;color:var(--gray)">'+n+'</td>'+
+      '<td><button class="btn btn-sm" style="background:#c0392b;color:#fff" onclick="idxCatDel('+i+')" '+(n>0?'title="لا يمكن حذف مؤشر له مواضيع"':'')+'>حذف</button></td>'+
+    '</tr>';
+  }
+  var infoTxt = canEdit
+    ? 'يمكنك إضافة مؤشر جديد أو تعديل اسم أو مدة أي مؤشر. المؤشرات التي لها مواضيع لا يمكن حذفها إلا بعد نقل مواضيعها.'
+    : 'قائمة المؤشرات المعتمدة ومددها المستهدفة. (عرض فقط)';
+  var html='<div class="overlay" id="cat_ov" style="align-items:flex-start;overflow-y:auto;padding:16px;">'+
+    '<div class="modal wide" style="max-height:none;">'+
+      '<div class="mh"><h3>📐 '+(canEdit?'إدارة المؤشرات':'المؤشرات المعتمدة')+'</h3><button class="mc" id="cat_close">✕</button></div>'+
+      '<div class="mb" style="padding:0;">'+
+        '<div style="padding:12px 16px;background:var(--teal-s);font-size:12.5px;color:var(--ink-soft);">'+infoTxt+'</div>'+
+        '<div class="tbl-scroll"><table class="dt" style="min-width:0"><thead><tr><th>اسم المؤشر</th><th>المدة (يوم)</th><th>المواضيع</th>'+(canEdit?'<th></th>':'')+'</tr></thead>'+
+        '<tbody id="cat_body">'+IDX_CATEGORIES.map(rowHtml).join('')+'</tbody></table></div>'+
+        (canEdit?'<div style="padding:12px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'+
+          '<input type="text" id="cat_new_label" placeholder="اسم المؤشر الجديد" style="flex:1;min-width:160px;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;">'+
+          '<input type="number" id="cat_new_target" min="1" placeholder="المدة" style="width:90px;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;text-align:center;">'+
+          '<button class="btn btn-teal btn-sm" id="cat_add">+ إضافة مؤشر</button>'+
+        '</div>':'')+
+      '</div>'+
+      '<div class="mf">'+(canEdit
+        ? '<button class="btn btn-outline" id="cat_cancel">إلغاء</button><button class="btn btn-teal" id="cat_save">حفظ التغييرات</button>'
+        : '<button class="btn btn-teal" id="cat_cancel">إغلاق</button>')+'</div>'+
+    '</div>'+
+  '</div>';
+  document.getElementById('modals').innerHTML=html;
+  var cl=closeModal;
+  document.getElementById('cat_close').onclick=cl;
+  document.getElementById('cat_cancel').onclick=cl;
+  document.getElementById('cat_ov').onclick=function(e){ if(e.target.id==='cat_ov') cl(); };
+  if(!canEdit) return;
+
+  // نعمل على نسخة مؤقتة
+  var working=IDX_CATEGORIES.map(function(c){ return {key:c.key,label:c.label,target:c.target}; });
+
+  window.idxCatDel=function(i){
+    if(countFor(working[i].key)>0){ toast('لا يمكن حذف مؤشر له مواضيع. انقلي مواضيعه أولاً.','err'); return; }
+    if(!confirm('حذف المؤشر: '+working[i].label+' ؟')) return;
+    working.splice(i,1);
+    reRender();
+  };
+  function reRender(){
+    var tb=document.getElementById('cat_body');
+    tb.innerHTML=working.map(rowHtml).join('');
+  }
+  document.getElementById('cat_add').onclick=function(){
+    var lbl=document.getElementById('cat_new_label').value.trim();
+    var tgt=parseInt(document.getElementById('cat_new_target').value,10);
+    if(!lbl){ toast('اسم المؤشر مطلوب','err'); return; }
+    if(!tgt||tgt<1){ toast('المدة يجب أن تكون رقماً صحيحاً','err'); return; }
+    // نولّد مفتاح فريد
+    var key='cat_'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+    working.push({key:key,label:lbl,target:tgt});
+    document.getElementById('cat_new_label').value='';
+    document.getElementById('cat_new_target').value='';
+    reRender();
+    toast('أُضيف المؤشر — اضغطي حفظ للتثبيت','ok');
+  };
+  document.getElementById('cat_save').onclick=function(){
+    // نقرأ التعديلات من الحقول
+    var labels=document.querySelectorAll('#cat_body .cat-label');
+    var targets=document.querySelectorAll('#cat_body .cat-target');
+    for(var i=0;i<labels.length;i++){
+      var lbl=labels[i].value.trim();
+      var tgt=parseInt(targets[i].value,10);
+      if(!lbl){ toast('اسم المؤشر لا يمكن أن يكون فارغاً','err'); return; }
+      if(!tgt||tgt<1){ toast('المدة يجب أن تكون رقماً صحيحاً','err'); return; }
+      working[i].label=lbl; working[i].target=tgt;
+    }
+    if(!working.length){ toast('يجب أن يكون هناك مؤشر واحد على الأقل','err'); return; }
+    saveIdxCats(working);
+    addLog('تعديل المؤشرات', working.length+' مؤشر');
+    cl();
+    // لو المؤشر الحالي المحدد اتحذف، نرجع لأول واحد
+    if(!idxCat(S.idxCat) && S.idxCat!=='uncat') S.idxCat=working[0].key;
+    idxRenderAll();
+    toast('تم حفظ المؤشرات','ok');
   };
 };
 
