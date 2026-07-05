@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-05T06:20:51.483Z",
+  "exportedAt": "2026-07-05T06:29:42.060Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -3625,14 +3625,14 @@
       "source": "gov",
       "subject": "عدم تصدي بعض الجهات الحكومي بالسرعة للازمة للتعاطي مع ما يثار من مغالطات في وسائل التواصل الاجتماعي",
       "fromEntity": "الامانة العامة لمجلس الوزراء",
-      "letterNo": 390,
-      "letterDate": "2026-01-28T20:00:00.000Z",
-      "arrivalDate": "2026-02-02T20:00:00.000Z",
-      "referredDate": "2026-02-02T20:00:00.000Z",
-      "letterPrepDate": "2026-09-30T20:00:00.000Z",
+      "letterNo": "390",
+      "letterDate": "2026-01-29T00:00:00.000Z",
+      "arrivalDate": "2026-02-04T00:00:00.000Z",
+      "referredDate": "2026-02-04T00:00:00.000Z",
+      "letterPrepDate": "2026-02-10T00:00:00.000Z",
       "idxCategory": "okhra",
       "status": "responded",
-      "responseDate": "2026-09-30T20:00:00.000Z",
+      "responseDate": "2026-09-30T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 3,
       "content": "",
@@ -3640,7 +3640,7 @@
       "notes": "",
       "createdAt": "2026-07-05T06:03:00.473Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-05T06:03:00.473Z"
+      "updatedAt": "2026-07-05T06:29:40.039Z"
     },
     {
       "id": "t_mr7dx795_m3ru4",
