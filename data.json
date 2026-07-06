@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T03:45:17.898Z",
+  "exportedAt": "2026-07-06T03:45:40.167Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -945,14 +945,14 @@
       "source": "gov",
       "subject": "الاجتماع النحضيري للاجتماع الاول للجنة الامن البحري 2026 1.pdf",
       "fromEntity": "مجلس الامن الوطني",
-      "letterNo": 9,
-      "letterDate": "2026-01-09T20:00:00.000Z",
-      "arrivalDate": "2026-01-11T20:00:00.000Z",
-      "referredDate": "2026-01-11T20:00:00.000Z",
-      "letterPrepDate": "2026-01-12T20:00:00.000Z",
+      "letterNo": "9",
+      "letterDate": "2026-01-11T00:00:00.000Z",
+      "arrivalDate": "2026-01-13T00:00:00.000Z",
+      "referredDate": "2026-01-13T00:00:00.000Z",
+      "letterPrepDate": "2026-01-13T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-01-12T20:00:00.000Z",
+      "responseDate": "2026-01-14T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 1,
       "content": "",
@@ -960,7 +960,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.330Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.330Z"
+      "updatedAt": "2026-07-06T03:45:38.147Z"
     },
     {
       "id": "t_mr8o37pe_aj8p1",
