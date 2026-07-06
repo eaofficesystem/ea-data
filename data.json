@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T03:47:18.438Z",
+  "exportedAt": "2026-07-06T03:48:13.354Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -1607,14 +1607,14 @@
       "source": "gov",
       "subject": "تنظيم ندوة علمية بعنوان استدامة الموارد المائية.pdf",
       "fromEntity": "وزارة الثروة الزراعية والسمكية وموارد المياه",
-      "letterNo": 223183037,
-      "letterDate": "2026-01-17T20:00:00.000Z",
-      "arrivalDate": "2026-01-17T20:00:00.000Z",
-      "referredDate": "2026-01-18T20:00:00.000Z",
-      "letterPrepDate": "2026-01-18T20:00:00.000Z",
+      "letterNo": "223183037",
+      "letterDate": "2026-01-19T00:00:00.000Z",
+      "arrivalDate": "2026-01-19T00:00:00.000Z",
+      "referredDate": "2026-01-19T00:00:00.000Z",
+      "letterPrepDate": "2026-01-19T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-01-24T20:00:00.000Z",
+      "responseDate": "2026-01-26T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 0,
       "content": "",
@@ -1622,7 +1622,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.330Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.330Z"
+      "updatedAt": "2026-07-06T03:48:11.330Z"
     },
     {
       "id": "t_mr8o37pe_k9bpa",
