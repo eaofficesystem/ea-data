@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T04:01:17.936Z",
+  "exportedAt": "2026-07-06T04:01:34.468Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -5102,14 +5102,14 @@
       "source": "gov",
       "subject": "ورشة عمل حول  تنفيذ النظام الدولي للمعلومات الخاصة برصد الإشعاعات.pdf",
       "fromEntity": "وزارة الخارجية",
-      "letterNo": 7586,
-      "letterDate": "2026-02-18T20:00:00.000Z",
-      "arrivalDate": "2026-02-21T20:00:00.000Z",
-      "referredDate": "2026-02-22T20:00:00.000Z",
-      "letterPrepDate": "2026-02-25T20:00:00.000Z",
+      "letterNo": "7586",
+      "letterDate": "2026-02-19T00:00:00.000Z",
+      "arrivalDate": "2026-02-22T00:00:00.000Z",
+      "referredDate": "2026-02-23T00:00:00.000Z",
+      "letterPrepDate": "2026-02-26T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-02-25T20:00:00.000Z",
+      "responseDate": "2026-02-26T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 3,
       "content": "",
@@ -5117,7 +5117,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.332Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.332Z"
+      "updatedAt": "2026-07-06T04:01:21.579Z"
     },
     {
       "id": "t_mr8o37pg_w39gn",
