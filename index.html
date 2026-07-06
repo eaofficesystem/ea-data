@@ -971,6 +971,30 @@ function importExcel(file){
   reader.readAsArrayBuffer(file);
 }
 
+// فلترة المواضيع الجديدة فقط — المكرر الحقيقي = نفس (المصدر+الاسم+تاريخ الوصول)؛ المواضيع المتكررة شرعياً بتواريخ مختلفة تدخل
+function filterNewTopics(list){
+  function nt(s){ return String(s==null?'':s).trim().replace(/\s+/g,' '); }
+  function dk(d){ var x=toDate(d); return x?x.getFullYear()+'-'+(x.getMonth()+1)+'-'+x.getDate():''; }
+  var existSubj={}, existNo={};
+  S.topics.forEach(function(t){
+    if(t.subject) existSubj[t.source+'|'+nt(t.subject)+'|'+dk(t.arrivalDate)]=t;
+    if(t.letterNo!=null&&String(t.letterNo).trim()!=='') existNo[t.source+'|'+nt(t.letterNo)+'|'+nt(t.fromEntity)+'|'+dk(t.arrivalDate)]=t;
+  });
+  var fresh=[], dup=0, dupPairs=[];
+  list.forEach(function(t){
+    var ex=null;
+    if(t.subject) ex=existSubj[t.source+'|'+nt(t.subject)+'|'+dk(t.arrivalDate)]||null;
+    if(!ex&&t.letterNo!=null&&String(t.letterNo).trim()!=='') ex=existNo[t.source+'|'+nt(t.letterNo)+'|'+nt(t.fromEntity)+'|'+dk(t.arrivalDate)]||null;
+    if(ex){ dup++; dupPairs.push({fileT:t, existT:ex}); }
+    else{
+      fresh.push(t);
+      if(t.subject) existSubj[t.source+'|'+nt(t.subject)+'|'+dk(t.arrivalDate)]=t;
+      if(t.letterNo!=null&&String(t.letterNo).trim()!=='') existNo[t.source+'|'+nt(t.letterNo)+'|'+nt(t.fromEntity)+'|'+dk(t.arrivalDate)]=t;
+    }
+  });
+  return {fresh:fresh, dup:dup, dupPairs:dupPairs};
+}
+
 function showExcelImportChoice(allNew, counts){
   var detail='حكومية: '+counts.gov+' | شركات ومواطنين: '+counts.companies+' | داخلية: '+counts.internal;
   var html='<div class="overlay" id="xl_ov"><div class="modal" style="max-width:480px;">'+
@@ -984,7 +1008,7 @@ function showExcelImportChoice(allNew, counts){
       '<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">'+
         '<button class="btn btn-teal" id="xl_add" style="justify-content:flex-start;padding:13px 16px;text-align:right;">'+
           '<div><div style="font-weight:800">➕ إضافة فوق الموجود</div>'+
-          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُضاف المواضيع الجديدة دون حذف الموجودة</div></div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">يُضاف الجديد فقط — الموجود أصلاً يُتخطّى (لا تكرار)</div></div>'+
         '</button>'+
         '<button class="btn" id="xl_replace" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
           '<div><div style="font-weight:800">🔄 استبدال (حسب نوع الملف)</div>'+
@@ -1002,11 +1026,15 @@ function showExcelImportChoice(allNew, counts){
 
   document.getElementById('xl_add').onclick=function(){
     autoSnapshot('قبل استيراد إكسل (إضافة)');
-    S.topics=S.topics.concat(allNew);
-    save(); addLog('استيراد إكسل','إضافة '+allNew.length+' موضوع'); renderAll();
+    // نضيف الجديد فقط — نتخطى المواضيع الموجودة أصلاً (بالاسم+المصدر أو رقم+جهة)
+    var res=filterNewTopics(allNew);
+    if(!res.fresh.length){ cl(); toast('كل مواضيع الملف موجودة أصلاً ('+res.dup+' مكرر) — لم يُضف شيء','ok'); return; }
+    S.topics=S.topics.concat(res.fresh);
+    save(); addLog('استيراد إكسل','إضافة '+res.fresh.length+' جديد، تخطّي '+res.dup+' مكرر'); renderAll();
     var ix1=document.getElementById('indexScreen'); if(ix1&&!ix1.classList.contains('hidden')) idxRenderAll();
     cl();
-    finishExcelImport(allNew.length, counts, 'إضافة');
+    toast('أُضيف '+res.fresh.length+' موضوع جديد'+(res.dup?' — تُخطّي '+res.dup+' مكرر':''),'ok');
+    finishExcelImport(res.fresh.length, counts, 'إضافة');
   };
   document.getElementById('xl_replace').onclick=function(){
     // نحدد الأنواع الموجودة في الملف المستورد
@@ -2572,26 +2600,36 @@ function doMerge(wbReg, wbIdx){
       var prep=cm.letterPrepDate!==undefined?toDateFix(row[cm.letterPrepDate]):null;
       var ref=cm.referredDate!==undefined?toDateFix(row[cm.referredDate]):null;
       var rec={cat:cat, prep:prep, ref:ref};
-      bySubj[normTxt(subj)]=rec;
-      if(no!=null&&String(no).trim()!==''){ byNoEnt[normTxt(no)+'|'+normTxt(ent)]=rec; }
+      var sk=normTxt(subj);
+      (bySubj[sk]=bySubj[sk]||[]).push(rec);
+      if(no!=null&&String(no).trim()!==''){ var nk=normTxt(no)+'|'+normTxt(ent); (byNoEnt[nk]=byNoEnt[nk]||[]).push(rec); }
     }
   });
 
-  // ٣) الدمج: نصنّف مواضيع السجل الحكومية من فهارس المؤشر
+  // ٣) الدمج: نصنّف مواضيع السجل الحكومية من فهارس المؤشر (كل صف مؤشر يصنّف موضوعاً واحداً فقط)
   var classified=0, byCatCount={};
+  function sameDay(a,b){ var da=toDate(a),db=toDate(b); return da&&db&&da.getTime()===db.getTime(); }
   allNew.forEach(function(t){
     if(t.source!=='gov') return;
     var hit=null;
-    if(t.subject){ var k=normTxt(t.subject); if(bySubj[k]) hit=bySubj[k]; }
+    function pick(arr){
+      if(!arr) return null;
+      // نفضّل سجلاً غير مستخدم يطابق تاريخ التوجيه
+      for(var pi=0;pi<arr.length;pi++){ if(!arr[pi].used && arr[pi].ref && t.referredDate && sameDay(arr[pi].ref, t.referredDate)) return arr[pi]; }
+      for(var pj=0;pj<arr.length;pj++){ if(!arr[pj].used) return arr[pj]; }
+      return null;
+    }
+    if(t.subject){ hit=pick(bySubj[normTxt(t.subject)]); }
     if(!hit && t.letterNo!=null&&String(t.letterNo).trim()!==''){
-      var ke=normTxt(t.letterNo)+'|'+normTxt(t.fromEntity);
-      if(byNoEnt[ke]) hit=byNoEnt[ke];
+      hit=pick(byNoEnt[normTxt(t.letterNo)+'|'+normTxt(t.fromEntity)]);
     }
     if(hit){
+      hit.used=true; // واحد لواحد — لا يصنّف موضوعاً ثانياً
       classified++;
       if(hit.cat) t.idxCategory=hit.cat;
-      if(hit.prep && !t.letterPrepDate) t.letterPrepDate=hit.prep;
-      if(hit.ref && !t.referredDate) t.referredDate=hit.ref;
+      // تواريخ ملف المؤشر هي المرجع للمواضيع المصنّفة
+      if(hit.prep) t.letterPrepDate=hit.prep;
+      if(hit.ref) t.referredDate=hit.ref;
       byCatCount[hit.cat]=(byCatCount[hit.cat]||0)+1;
     }
   });
@@ -2617,7 +2655,7 @@ function doMerge(wbReg, wbIdx){
       '<div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">'+
         '<button class="btn btn-teal" id="mg_add" style="justify-content:flex-start;padding:13px 16px;text-align:right;">'+
           '<div><div style="font-weight:800">➕ إضافة فوق الموجود</div>'+
-          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">تُضاف المواضيع الجديدة مع الاحتفاظ بالحالية</div></div>'+
+          '<div style="font-size:11.5px;opacity:.85;margin-top:2px">يُضاف الجديد فقط — المواضيع الموجودة أصلاً تُتخطّى (لا تكرار)</div></div>'+
         '</button>'+
         '<button class="btn" id="mg_replace" style="background:#c0392b;color:#fff;justify-content:flex-start;padding:13px 16px;text-align:right;">'+
           '<div><div style="font-weight:800">🔄 استبدال (حسب نوع الملف)</div>'+
@@ -2634,19 +2672,29 @@ function doMerge(wbReg, wbIdx){
   document.getElementById('mg_ov').onclick=function(e){ if(e.target.id==='mg_ov') cl(); };
   function finishMerge(mode){
     autoSnapshot('قبل الاستيراد والدمج ('+mode+')');
+    var added=allNew.length, dup=0;
     if(mode==='استبدال'){
       var srcInFile={};
       allNew.forEach(function(t){ srcInFile[t.source]=true; });
       S.topics=S.topics.filter(function(t){ return !srcInFile[t.source]; }).concat(allNew);
     } else {
-      S.topics=S.topics.concat(allNew);
+      // إضافة: الجديد فقط — والمكرر ينقل تصنيفه وتواريخه للنسخة الموجودة
+      var res=filterNewTopics(allNew);
+      added=res.fresh.length; dup=res.dup;
+      res.dupPairs.forEach(function(p){
+        if(p.fileT.idxCategory){ p.existT.idxCategory=p.fileT.idxCategory; }
+        if(p.fileT.letterPrepDate){ p.existT.letterPrepDate=p.fileT.letterPrepDate; }
+        if(p.fileT.referredDate){ p.existT.referredDate=p.fileT.referredDate; }
+        p.existT.updatedAt=new Date().toISOString();
+      });
+      S.topics=S.topics.concat(res.fresh);
     }
     save();
     if(S.session&&S.session.role==='admin') ghPushSilent();
-    addLog('استيراد ودمج', allNew.length+' موضوع، صُنّف '+classified);
+    addLog('استيراد ودمج', added+' موضوع، صُنّف '+classified+(dup?'، تُخطّي '+dup+' مكرر':''));
     cl(); renderAll();
     var ix=document.getElementById('indexScreen'); if(ix&&!ix.classList.contains('hidden')) idxRenderAll();
-    toast('تم الاستيراد والدمج: '+allNew.length+' موضوع ('+classified+' مصنّف)','ok');
+    toast('تم الاستيراد والدمج: '+added+' موضوع'+(dup?' — تُخطّي '+dup+' مكرر':''),'ok');
   }
   document.getElementById('mg_add').onclick=function(){ finishMerge('إضافة'); };
   document.getElementById('mg_replace').onclick=function(){
@@ -2684,39 +2732,50 @@ window.idxClassifyFromWorkbook=function(wb){
           var prep=cm.letterPrepDate!==undefined?toDateFix(row[cm.letterPrepDate]):null;
           var ref=cm.referredDate!==undefined?toDateFix(row[cm.referredDate]):null;
           var rec={cat:cat, prep:prep, ref:ref};
-          // مفتاح الاسم (الأساسي — أدق)
-          bySubj[normTxt(subj)]=rec;
+          // مفتاح الاسم (الأساسي — أدق) — قائمة لدعم الصفوف المتكررة بنفس الاسم
+          var sk=normTxt(subj);
+          (bySubj[sk]=bySubj[sk]||[]).push(rec);
           // مفتاح رقم+جهة (احتياطي — يتجنّب تكرار الأرقام)
-          if(no!=null&&String(no).trim()!==''){ byNoEnt[normTxt(no)+'|'+normTxt(ent)]=rec; }
+          if(no!=null&&String(no).trim()!==''){ var nk=normTxt(no)+'|'+normTxt(ent); (byNoEnt[nk]=byNoEnt[nk]||[]).push(rec); }
         }
       });
       if(!totalRows){ toast('لم توجد مواضيع في الملف. تأكدي من أسماء الأوراق (ترشيح/مراجعات/دراسة/أخرى).','err'); return; }
 
-      // نطابق مع المواضيع الحكومية الموجودة — الاسم أولاً، ثم رقم+جهة
+      autoSnapshot('قبل التصنيف من إكسل');
+      // إعادة تصنيف من الصفر: نمسح التصنيفات السابقة كي يطابق العدد الملف تماماً
+      S.topics.forEach(function(t){ if(t.source==='gov'&&t.idxCategory){ delete t.idxCategory; } });
+
+      // نطابق — الاسم أولاً (مع تفضيل تطابق تاريخ التوجيه)، ثم رقم+جهة (كل صف مؤشر يصنّف موضوعاً واحداً فقط)
       var matched=0, updated=0;
       var byCatCount={};
+      function sameDay(a,b){ var da=toDate(a),db=toDate(b); return da&&db&&da.getTime()===db.getTime(); }
       S.topics.forEach(function(t){
         if(t.source!=='gov') return;
         var hit=null;
-        // 1) مطابقة بالاسم (الأدق)
-        if(t.subject){ var k=normTxt(t.subject); if(bySubj[k]) hit=bySubj[k]; }
-        // 2) احتياطي: رقم الرسالة + الجهة معاً
+        function pick(arr){
+          if(!arr) return null;
+          // نفضّل سجلاً غير مستخدم يطابق تاريخ التوجيه — يضمن التواريخ للموضوع الصحيح
+          for(var pi=0;pi<arr.length;pi++){ if(!arr[pi].used && arr[pi].ref && t.referredDate && sameDay(arr[pi].ref, t.referredDate)) return arr[pi]; }
+          for(var pj=0;pj<arr.length;pj++){ if(!arr[pj].used) return arr[pj]; }
+          return null;
+        }
+        if(t.subject){ hit=pick(bySubj[normTxt(t.subject)]); }
         if(!hit && t.letterNo!=null&&String(t.letterNo).trim()!==''){
-          var ke=normTxt(t.letterNo)+'|'+normTxt(t.fromEntity);
-          if(byNoEnt[ke]) hit=byNoEnt[ke];
+          hit=pick(byNoEnt[normTxt(t.letterNo)+'|'+normTxt(t.fromEntity)]);
         }
         if(hit){
+          hit.used=true; // واحد لواحد — لا يصنّف موضوعاً ثانياً
           matched++;
-          var changed=false;
-          if(hit.cat && t.idxCategory!==hit.cat){ t.idxCategory=hit.cat; changed=true; }
-          if(hit.prep && !t.letterPrepDate){ t.letterPrepDate=hit.prep; changed=true; }
-          if(hit.ref && !t.referredDate){ t.referredDate=hit.ref; changed=true; }
-          if(changed){ updated++; t.updatedAt=new Date().toISOString(); }
+          t.idxCategory=hit.cat;
+          // تواريخ الملف هي المرجع — تستبدل أي تاريخ قديم خاطئ
+          if(hit.prep) t.letterPrepDate=hit.prep;
+          if(hit.ref) t.referredDate=hit.ref;
+          t.updatedAt=new Date().toISOString();
+          updated++;
           byCatCount[hit.cat]=(byCatCount[hit.cat]||0)+1;
         }
       });
 
-      autoSnapshot('قبل التصنيف من إكسل');
       save();
       if(S.session&&S.session.role==='admin') ghPushSilent();
       addLog('تصنيف من إكسل', matched+' موضوع طوبق، '+updated+' حُدّث');
