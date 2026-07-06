@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T03:53:18.448Z",
+  "exportedAt": "2026-07-06T03:54:02.402Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -2309,14 +2309,14 @@
       "source": "gov",
       "subject": "ورشة عمل دبلوماسية المناخ والبيئة",
       "fromEntity": "وزارة الخارجية",
-      "letterNo": 2634,
-      "letterDate": "2026-01-19T20:00:00.000Z",
-      "arrivalDate": "2026-01-25T20:00:00.000Z",
-      "referredDate": "2026-01-25T20:00:00.000Z",
-      "letterPrepDate": "2026-01-28T20:00:00.000Z",
+      "letterNo": "2634",
+      "letterDate": "2026-01-20T00:00:00.000Z",
+      "arrivalDate": "2026-01-26T00:00:00.000Z",
+      "referredDate": "2026-01-26T00:00:00.000Z",
+      "letterPrepDate": "2026-01-26T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-01-28T20:00:00.000Z",
+      "responseDate": "2026-01-29T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 0,
       "content": "",
@@ -2324,7 +2324,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.331Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.331Z"
+      "updatedAt": "2026-07-06T03:54:00.370Z"
     },
     {
       "id": "t_mr8o37pf_0s1v0",
