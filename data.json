@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T03:46:17.918Z",
+  "exportedAt": "2026-07-06T03:47:00.708Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -1471,14 +1471,14 @@
       "source": "gov",
       "subject": "الملتقى السنوي الثاني للشركات الناشئة بقيادة طلابية لعام 2026",
       "fromEntity": "جامعة التقنية والعلوم التطبيقية",
-      "letterNo": 63,
-      "letterDate": "2026-01-12T20:00:00.000Z",
-      "arrivalDate": "2026-01-12T20:00:00.000Z",
-      "referredDate": "2026-01-18T20:00:00.000Z",
-      "letterPrepDate": "2026-01-19T20:00:00.000Z",
+      "letterNo": "63",
+      "letterDate": "2026-01-14T00:00:00.000Z",
+      "arrivalDate": "2026-01-14T00:00:00.000Z",
+      "referredDate": "2026-01-17T00:00:00.000Z",
+      "letterPrepDate": "2026-01-21T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-01-19T20:00:00.000Z",
+      "responseDate": "2026-01-21T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 2,
       "content": "",
@@ -1486,7 +1486,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.330Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.330Z"
+      "updatedAt": "2026-07-06T03:46:58.691Z"
     },
     {
       "id": "t_mr8o37pe_y9tkr",
