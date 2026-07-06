@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T03:50:43.825Z",
+  "exportedAt": "2026-07-06T03:51:17.900Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -2104,14 +2104,14 @@
       "source": "gov",
       "subject": "المؤتمر السنوي للادعاء العام",
       "fromEntity": "الادعاء العام",
-      "letterNo": 71,
-      "letterDate": "2026-01-19T20:00:00.000Z",
-      "arrivalDate": "2026-01-21T20:00:00.000Z",
-      "referredDate": "2026-01-22T20:00:00.000Z",
-      "letterPrepDate": "2026-01-22T20:00:00.000Z",
+      "letterNo": "71",
+      "letterDate": "2026-01-20T00:00:00.000Z",
+      "arrivalDate": "2026-01-22T00:00:00.000Z",
+      "referredDate": "2026-01-23T00:00:00.000Z",
+      "letterPrepDate": "2026-01-23T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-01-25T20:00:00.000Z",
+      "responseDate": "2026-01-26T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 0,
       "content": "",
@@ -2119,7 +2119,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.330Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.330Z"
+      "updatedAt": "2026-07-06T03:51:17.801Z"
     },
     {
       "id": "t_mr8o37pe_et0b3",
