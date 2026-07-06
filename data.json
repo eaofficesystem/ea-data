@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-07-06T03:57:17.924Z",
+  "exportedAt": "2026-07-06T03:57:54.775Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -3850,14 +3850,14 @@
       "source": "gov",
       "subject": "دعوة لعقد ورشة عمل مشتركة لفريق الامن النووي.pdf",
       "fromEntity": "المكتب السلطاني",
-      "letterNo": 2668413,
-      "letterDate": "2026-02-01T20:00:00.000Z",
-      "arrivalDate": "2026-02-03T20:00:00.000Z",
-      "referredDate": "2026-02-06T20:00:00.000Z",
-      "letterPrepDate": "2026-02-05T20:00:00.000Z",
+      "letterNo": "2668413",
+      "letterDate": "2026-02-03T00:00:00.000Z",
+      "arrivalDate": "2026-02-05T00:00:00.000Z",
+      "referredDate": "2026-02-08T00:00:00.000Z",
+      "letterPrepDate": "2026-02-07T00:00:00.000Z",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-02-06T20:00:00.000Z",
+      "responseDate": "2026-02-08T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 1,
       "content": "",
@@ -3865,7 +3865,7 @@
       "notes": "",
       "createdAt": "2026-07-06T03:35:23.331Z",
       "createdBy": "admin",
-      "updatedAt": "2026-07-06T03:35:23.331Z"
+      "updatedAt": "2026-07-06T03:57:52.743Z"
     },
     {
       "id": "t_mr8o37pf_io7ti",
