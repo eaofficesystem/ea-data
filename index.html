@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-07-12.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-07-13.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -632,7 +632,8 @@ function idxDuration(startStr, endStr){
   var cfg=loadIdxCfg();
   var s=toDate(startStr), e=toDate(endStr);
   if(!s||!e) return null;
-  if(e<s) return null;
+  // إن كان تاريخ الإعداد قبل التوجيه، نحسب بنفس المعادلة بين التاريخين بغض النظر عن الترتيب
+  if(e<s){ var tmp=s; s=e; e=tmp; }
   var hols = cfg.skipHolidays ? holidaySet() : {};
   function isOff(d){
     if(cfg.skipWeekend){ var w=d.getDay(); if(w===5||w===6) return true; }
