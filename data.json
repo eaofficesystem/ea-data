@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-04T03:58:50.057Z",
+  "exportedAt": "2026-08-04T03:59:33.380Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -4306,13 +4306,14 @@
       "source": "gov",
       "subject": "الاجتماع التحضيري لاجتماع لجنة الامن البحري  2 2026.pdf",
       "fromEntity": "مجلس الامن الوطني",
-      "letterNo": 9,
-      "letterDate": "2026-07-14T20:00:00.000Z",
-      "arrivalDate": "2026-07-17T20:00:00.000Z",
-      "referredDate": "2026-07-19T20:00:00.000Z",
-      "letterPrepDate": "2026-07-24T20:00:00.000Z",
+      "letterNo": "9",
+      "letterDate": "2026-07-15T00:00:00.000Z",
+      "arrivalDate": "2026-07-18T00:00:00.000Z",
+      "referredDate": "2026-07-21T00:00:00.000Z",
+      "letterPrepDate": "2026-07-26T00:00:00.000Z",
+      "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-07-24T20:00:00.000Z",
+      "responseDate": "2026-07-25T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 4,
       "content": "ترشيح",
@@ -4320,8 +4321,7 @@
       "notes": "",
       "createdAt": "2026-08-04T03:52:59.204Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-04T03:53:40.651Z",
-      "idxCategory": "tarsheeh"
+      "updatedAt": "2026-08-04T03:59:31.367Z"
     },
     {
       "id": "t_mse4hjr8_y0txi",
