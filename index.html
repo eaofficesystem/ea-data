@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-07-02.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-07-12.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -2613,22 +2613,25 @@ function doMerge(wbReg, wbIdx){
   allNew.forEach(function(t){
     if(t.source!=='gov') return;
     var hit=null;
-    function pick(arr){
+    // requireDate=true: لا نقبل إلا تطابق تاريخ توجيه مؤكّد (رقم الرسالة يتكرر بين مواضيع مختلفة فلا يُعتمد وحده)
+    // requireDate=false: نقبل مرشحاً وحيداً بلا لبس حتى لو التاريخ غير متاح
+    function pick(arr, requireDate){
       if(!arr) return null;
-      // نفضّل سجلاً غير مستخدم يطابق تاريخ التوجيه
-      for(var pi=0;pi<arr.length;pi++){ if(!arr[pi].used && arr[pi].ref && t.referredDate && sameDay(arr[pi].ref, t.referredDate)) return arr[pi]; }
-      for(var pj=0;pj<arr.length;pj++){ if(!arr[pj].used) return arr[pj]; }
-      return null;
+      var avail=arr.filter(function(r){ return !r.used; });
+      var dateMatch=avail.filter(function(r){ return r.ref && t.referredDate && sameDay(r.ref, t.referredDate); });
+      if(dateMatch.length) return dateMatch[0];
+      if(!requireDate && avail.length===1) return avail[0]; // مرشح وحيد بلا لبس
+      return null; // لبس بلا تأكيد — لا نخمّن
     }
-    if(t.subject){ hit=pick(bySubj[normTxt(t.subject)]); }
+    if(t.subject){ hit=pick(bySubj[normTxt(t.subject)], false); }
     if(!hit && t.letterNo!=null&&String(t.letterNo).trim()!==''){
-      hit=pick(byNoEnt[normTxt(t.letterNo)+'|'+normTxt(t.fromEntity)]);
+      hit=pick(byNoEnt[normTxt(t.letterNo)+'|'+normTxt(t.fromEntity)], true);
     }
     if(hit){
       hit.used=true; // واحد لواحد — لا يصنّف موضوعاً ثانياً
       classified++;
       if(hit.cat) t.idxCategory=hit.cat;
-      // تواريخ ملف المؤشر هي المرجع للمواضيع المصنّفة
+      // تواريخ ملف المؤشر هي المرجع للمواضيع المصنّفة (فقط عند تطابق مؤكّد)
       if(hit.prep) t.letterPrepDate=hit.prep;
       if(hit.ref) t.referredDate=hit.ref;
       byCatCount[hit.cat]=(byCatCount[hit.cat]||0)+1;
@@ -2746,29 +2749,30 @@ window.idxClassifyFromWorkbook=function(wb){
       // إعادة تصنيف من الصفر: نمسح التصنيفات السابقة كي يطابق العدد الملف تماماً
       S.topics.forEach(function(t){ if(t.source==='gov'&&t.idxCategory){ delete t.idxCategory; } });
 
-      // نطابق — الاسم أولاً (مع تفضيل تطابق تاريخ التوجيه)، ثم رقم+جهة (كل صف مؤشر يصنّف موضوعاً واحداً فقط)
+      // نطابق — الاسم أولاً (مرشح وحيد أو تطابق تاريخ)، ثم رقم+جهة (يتطلب تطابق تاريخ إلزامي لأن الرقم يتكرر)
       var matched=0, updated=0;
       var byCatCount={};
       function sameDay(a,b){ var da=toDate(a),db=toDate(b); return da&&db&&da.getTime()===db.getTime(); }
       S.topics.forEach(function(t){
         if(t.source!=='gov') return;
         var hit=null;
-        function pick(arr){
+        function pick(arr, requireDate){
           if(!arr) return null;
-          // نفضّل سجلاً غير مستخدم يطابق تاريخ التوجيه — يضمن التواريخ للموضوع الصحيح
-          for(var pi=0;pi<arr.length;pi++){ if(!arr[pi].used && arr[pi].ref && t.referredDate && sameDay(arr[pi].ref, t.referredDate)) return arr[pi]; }
-          for(var pj=0;pj<arr.length;pj++){ if(!arr[pj].used) return arr[pj]; }
-          return null;
+          var avail=arr.filter(function(r){ return !r.used; });
+          var dateMatch=avail.filter(function(r){ return r.ref && t.referredDate && sameDay(r.ref, t.referredDate); });
+          if(dateMatch.length) return dateMatch[0];
+          if(!requireDate && avail.length===1) return avail[0]; // مرشح وحيد بلا لبس
+          return null; // لبس بلا تأكيد — لا نخمّن
         }
-        if(t.subject){ hit=pick(bySubj[normTxt(t.subject)]); }
+        if(t.subject){ hit=pick(bySubj[normTxt(t.subject)], false); }
         if(!hit && t.letterNo!=null&&String(t.letterNo).trim()!==''){
-          hit=pick(byNoEnt[normTxt(t.letterNo)+'|'+normTxt(t.fromEntity)]);
+          hit=pick(byNoEnt[normTxt(t.letterNo)+'|'+normTxt(t.fromEntity)], true);
         }
         if(hit){
           hit.used=true; // واحد لواحد — لا يصنّف موضوعاً ثانياً
           matched++;
           t.idxCategory=hit.cat;
-          // تواريخ الملف هي المرجع — تستبدل أي تاريخ قديم خاطئ
+          // تواريخ الملف هي المرجع (فقط عند تطابق مؤكّد — لا تخمين)
           if(hit.prep) t.letterPrepDate=hit.prep;
           if(hit.ref) t.referredDate=hit.ref;
           t.updatedAt=new Date().toISOString();
