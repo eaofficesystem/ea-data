@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-04T03:55:31.982Z",
+  "exportedAt": "2026-08-04T03:56:24.921Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -6014,11 +6014,12 @@
       "source": "gov",
       "subject": "دعوة لحضور الاجتماع الثاني للجنة الامن البحري 2 2026.pdf",
       "fromEntity": "مجلس الامن الوطني",
-      "letterNo": 9,
-      "letterDate": "2026-07-31T20:00:00.000Z",
-      "arrivalDate": "2026-07-31T20:00:00.000Z",
-      "referredDate": "2026-07-31T20:00:00.000Z",
+      "letterNo": "9",
+      "letterDate": "2026-08-01T00:00:00.000Z",
+      "arrivalDate": "2026-08-01T00:00:00.000Z",
+      "referredDate": "2026-08-02T00:00:00.000Z",
       "letterPrepDate": null,
+      "idxCategory": "tarsheeh",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -6028,8 +6029,7 @@
       "notes": "",
       "createdAt": "2026-08-04T03:52:59.205Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-04T03:53:40.651Z",
-      "idxCategory": "tarsheeh"
+      "updatedAt": "2026-08-04T03:56:22.915Z"
     },
     {
       "id": "t_mse4hjr9_2ejyk",
