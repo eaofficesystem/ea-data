@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-04T03:56:24.921Z",
+  "exportedAt": "2026-08-04T03:56:58.166Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -1020,13 +1020,14 @@
       "source": "gov",
       "subject": "برنامج تبادل الخبرات مع الاكاديمية الرئاسية الروسية للاقتصاد الوطني والادرة العامة",
       "fromEntity": "الاكاديمية السلطانية للادارة",
-      "letterNo": 599,
-      "letterDate": "2026-06-21T20:00:00.000Z",
-      "arrivalDate": "2026-06-22T20:00:00.000Z",
-      "referredDate": "2026-06-23T20:00:00.000Z",
-      "letterPrepDate": "2026-06-22T20:00:00.000Z",
+      "letterNo": "599",
+      "letterDate": "2026-06-22T00:00:00.000Z",
+      "arrivalDate": "2026-06-23T00:00:00.000Z",
+      "referredDate": "2026-06-05T00:00:00.000Z",
+      "letterPrepDate": "2026-06-24T00:00:00.000Z",
+      "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": "2026-06-23T20:00:00.000Z",
+      "responseDate": "2026-06-24T00:00:00.000Z",
       "respRaw": "",
       "durationDays": 1,
       "content": "ترشيح",
@@ -1034,8 +1035,7 @@
       "notes": "",
       "createdAt": "2026-08-04T03:52:59.203Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-04T03:53:40.650Z",
-      "idxCategory": "tarsheeh"
+      "updatedAt": "2026-08-04T03:56:56.155Z"
     },
     {
       "id": "t_mse4hjr7_8wddd",
