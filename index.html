@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-07-13.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-07-14.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -793,10 +793,12 @@ async function loadFromGitHub(){
     if(Array.isArray(imported.holidays)){ saveHolidays(imported.holidays); }
     if(imported.idxCfg){ saveIdxCfg(imported.idxCfg); }
     if(Array.isArray(imported.idxCats)&&imported.idxCats.length){ IDX_CATEGORIES=imported.idxCats; try{ localStorage.setItem(IDX_CAT_KEY,JSON.stringify(imported.idxCats)); }catch(e){} }
+    if(Array.isArray(imported.log)&&imported.log.length){ mergeLog(imported.log); }
     if(!topics.length){
-      // حتى لو ما فيه مواضيع رئيسية، حدّث المؤشر لو ظاهر
-      var ixScr=document.getElementById('indexScreen');
-      if(ixScr && !ixScr.classList.contains('hidden')) idxRenderAll();
+      // حتى لو ما فيه مواضيع رئيسية، حدّث المؤشر والسجل لو ظاهرين
+      var ixScrE=document.getElementById('indexScreen');
+      if(ixScrE && !ixScrE.classList.contains('hidden')) idxRenderAll();
+      if(document.getElementById('log_ov')) openLogModal();
       return;
     }
     // احفظ نسخة احتياطية قبل الكتابة
@@ -806,6 +808,7 @@ async function loadFromGitHub(){
     renderAll();
     var ixScr2=document.getElementById('indexScreen');
     if(ixScr2 && !ixScr2.classList.contains('hidden')) idxRenderAll();
+    if(document.getElementById('log_ov')) openLogModal();
     setSyncIndicator('✅ متزامن','#5cd3a6');
   }catch(e){ /* صامت */ }
 }
@@ -1505,6 +1508,21 @@ function addLog(action, detail){
   }catch(e){}
 }
 
+// دمج سجل السحابة مع المحلي (من كل الأجهزة) بدون تكرار، مرتّب بالأحدث أولاً
+function mergeLog(cloudLog){
+  try{
+    var local=loadLog();
+    var seen={}; var merged=[];
+    local.concat(cloudLog).forEach(function(e){
+      var key=(e.ts||'')+'|'+(e.user||'')+'|'+(e.action||'')+'|'+(e.detail||'');
+      if(!seen[key]){ seen[key]=true; merged.push(e); }
+    });
+    merged.sort(function(a,b){ return new Date(b.ts)-new Date(a.ts); });
+    if(merged.length>500) merged=merged.slice(0,500);
+    localStorage.setItem(LOG_KEY, JSON.stringify(merged));
+  }catch(e){}
+}
+
 function openLogModal(){
   var logs=loadLog();
   var rows=logs.length===0
@@ -2090,7 +2108,7 @@ window.uploadToGitHub=async function uploadToGitHub(){
 async function ghPut(cfg, retry){
   try{
     var payload={version:'1.1',exportedAt:new Date().toISOString(),exportedBy:S.session?S.session.username:'',topics:S.topics,
-      idxTopics:S.idxTopics, holidays:loadHolidays(), idxCfg:loadIdxCfg(), idxCats:IDX_CATEGORIES};
+      idxTopics:S.idxTopics, holidays:loadHolidays(), idxCfg:loadIdxCfg(), idxCats:IDX_CATEGORIES, log:loadLog()};
     var contentB64=btoa(unescape(encodeURIComponent(JSON.stringify(payload,null,2))));
     var fileUrl='https://api.github.com/repos/'+cfg.user+'/'+cfg.repo+'/contents/'+GH_DATA_FILE;
     // اجلب آخر SHA طازج (بدون كاش)
@@ -2125,6 +2143,13 @@ window.downloadFromGitHub=async function downloadFromGitHub(){
     if(!Array.isArray(topics)){ showGhInfo('❌ ملف غير صالح','#fdeaea'); return; }
     autoSnapshot('قبل التحميل من GitHub');
     S.topics=topics; save(); renderAll();
+    if(Array.isArray(imported.idxTopics)){ S.idxTopics=imported.idxTopics; try{ localStorage.setItem(IDX_SK,JSON.stringify(S.idxTopics)); }catch(e){} }
+    if(Array.isArray(imported.holidays)){ saveHolidays(imported.holidays); }
+    if(imported.idxCfg){ saveIdxCfg(imported.idxCfg); }
+    if(Array.isArray(imported.idxCats)&&imported.idxCats.length){ IDX_CATEGORIES=imported.idxCats; try{ localStorage.setItem(IDX_CAT_KEY,JSON.stringify(imported.idxCats)); }catch(e){} }
+    if(Array.isArray(imported.log)&&imported.log.length){ mergeLog(imported.log); }
+    var ixScr2=document.getElementById('indexScreen'); if(ixScr2 && !ixScr2.classList.contains('hidden')) idxRenderAll();
+    if(document.getElementById('log_ov')) openLogModal(); // تحديث النافذة لو مفتوحة
     showGhInfo('✅ تم التحميل بنجاح!<br>📊 '+S.topics.length+' موضوع<br>🕒 آخر تحديث: '+(imported.exportedAt?new Date(imported.exportedAt).toLocaleString('ar-SA'):'-'),'#e8f8f5');
     updateGhStatus('✅ متزامن','#1d8349');
     addLog('تحميل GitHub','تحميل '+topics.length+' موضوع');
