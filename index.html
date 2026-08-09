@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-07-14.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-07-16.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -698,29 +698,50 @@ function idxSave(){
 function p2(n){ return (n<10?'0':'')+n; }
 function toDate(v){
   if(!v) return null;
-  if(v instanceof Date && !isNaN(v)) return new Date(v.getFullYear(),v.getMonth(),v.getDate());
+  if(v instanceof Date && !isNaN(v)){
+    if(v.getFullYear()<1990||v.getFullYear()>2100) return null; // سنة غير منطقية — لا نقبلها
+    return new Date(v.getFullYear(),v.getMonth(),v.getDate());
+  }
   if(typeof v==='number'){
     var d=new Date(Math.round((v-25569)*86400*1000));
-    return isNaN(d)?null:new Date(d.getFullYear(),d.getMonth(),d.getDate());
+    if(isNaN(d)) return null;
+    if(d.getFullYear()<1990||d.getFullYear()>2100) return null;
+    return new Date(d.getFullYear(),d.getMonth(),d.getDate());
   }
   if(typeof v==='string'){
     var s=v.trim(); if(!s) return null;
-    // صيغة يوم/شهر/سنة (نصية)
+    // صيغة يوم/شهر/سنة (نصية) — نتطلّب سنة من 4 أرقام بالضبط؛ سنة ناقصة (3 أرقام) تُرفض بدل تخمينها
     var m=s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
-    if(m) return new Date(+m[3],+m[2]-1,+m[1]);
+    if(m){
+      var dd=+m[1], mm=+m[2], yy=+m[3];
+      if(mm>=1&&mm<=12&&dd>=1&&dd<=31) return new Date(yy,mm-1,dd);
+      return null; // شهر/يوم خارج النطاق — بيانات غير صالحة، لا نخمّن
+    }
     // صيغة ISO (سنة-شهر-يوم) — نقرأ الأجزاء مباشرة لتفادي انزياح التوقيت
     var iso=s.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if(iso) return new Date(+iso[1],+iso[2]-1,+iso[3]);
-    var d2=new Date(s); return isNaN(d2)?null:new Date(d2.getFullYear(),d2.getMonth(),d2.getDate());
+    if(iso){
+      var yy2=+iso[1], mm2=+iso[2], dd2=+iso[3];
+      if(mm2>=1&&mm2<=12&&dd2>=1&&dd2<=31) return new Date(yy2,mm2-1,dd2);
+      return null;
+    }
+    // نص لا يطابق صيغة معروفة (مثل سنة ناقصة رقم "5/21/202") — لا نستخدم محلّل JS التلقائي المتساهل
+    // لأنه قد يفسّرها كسنة 202م ويكسر الترتيب بصمت. نتحقق من معقولية الناتج فقط.
+    var d2=new Date(s);
+    if(isNaN(d2)) return null;
+    if(d2.getFullYear()<1990||d2.getFullYear()>2100) return null; // سنة غير منطقية — نرفضها بدل قبولها
+    return new Date(d2.getFullYear(),d2.getMonth(),d2.getDate());
   }
   return null;
 }
 function fmt(v){ var d=toDate(v); if(!d) return '—'; return p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear(); }
 // تصحيح الاستيراد: السنوات المستقبلية الغلط (2027 فأكثر) تُصحّح لـ 2026. تبقى 2025 و2026 كما هي.
+// ترجع نص YYYY-MM-DD (محلي صافٍ) وليس كائن Date — لأن حفظ كائن Date عبر JSON.stringify
+// يحوّله تلقائياً لتوقيت UTC، فيسبب انزياح يوم عند العرض لاحقاً. النص الصريح يمنع هذا نهائياً.
 function toDateFix(v){
   var d=toDate(v); if(!d) return null;
-  if(d.getFullYear()>2026){ return new Date(2026, d.getMonth(), d.getDate()); }
-  return d;
+  var y=d.getFullYear();
+  if(y>2026) y=2026;
+  return y+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
 }
 function today(){ var n=new Date(); return new Date(n.getFullYear(),n.getMonth(),n.getDate()); }
 function isWknd(d){ var w=d.getDay(); return w===5||w===6; }
@@ -942,7 +963,7 @@ function importExcel(file){
   var reader=new FileReader();
   reader.onload=function(e){
     try{
-      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
+      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:false,raw:true});
       if(!wb.SheetNames||!wb.SheetNames.length){ toast('الملف لا يحتوي أوراق','err'); return; }
       // حماية: لو الملف ملف مؤشر مدة الرد (فيه أوراق فئات)، نصنّف بدل الإضافة — لا مواضيع جديدة
       var catSheets=wb.SheetNames.filter(function(n){ return sheetToIdxCat(n); });
@@ -1296,13 +1317,13 @@ function openTopicModal(topic, viewOnly){
       id:t.id||uid(), source:newSrc, subject:subj,
       fromEntity:document.getElementById('f_entity').value.trim(),
       letterNo:document.getElementById('f_no').value.trim(),
-      letterDate:document.getElementById('f_ldate').value?new Date(document.getElementById('f_ldate').value):null,
-      arrivalDate:document.getElementById('f_adate').value?new Date(document.getElementById('f_adate').value):null,
-      referredDate:rdateEl&&rdateEl.value?new Date(rdateEl.value):(t.referredDate||null),
-      letterPrepDate:pdateEl&&pdateEl.value?new Date(pdateEl.value):(t.letterPrepDate||null),
+      letterDate:document.getElementById('f_ldate').value||null,
+      arrivalDate:document.getElementById('f_adate').value||null,
+      referredDate:rdateEl&&rdateEl.value?rdateEl.value:(t.referredDate||null),
+      letterPrepDate:pdateEl&&pdateEl.value?pdateEl.value:(t.letterPrepDate||null),
       idxCategory:idxcatEl?(idxcatEl.value||null):(t.idxCategory||null),
       status:newSt,
-      responseDate:newSt==='responded'&&rdEl&&rdEl.value?new Date(rdEl.value):null,
+      responseDate:newSt==='responded'&&rdEl&&rdEl.value?rdEl.value:null,
       respRaw:t.respRaw||'',
       durationDays:durEl&&durEl.value!==''?parseInt(durEl.value):null,
       content:document.getElementById('f_content').value.trim(),
@@ -2559,11 +2580,11 @@ window.startMerge=function(){
     var reader1=new FileReader();
     reader1.onload=function(e1){
       try{
-        var wbReg=XLSX.read(new Uint8Array(e1.target.result),{type:'array',cellDates:true,raw:true});
+        var wbReg=XLSX.read(new Uint8Array(e1.target.result),{type:'array',cellDates:false,raw:true});
         var reader2=new FileReader();
         reader2.onload=function(e2){
           try{
-            var wbIdx=XLSX.read(new Uint8Array(e2.target.result),{type:'array',cellDates:true,raw:true});
+            var wbIdx=XLSX.read(new Uint8Array(e2.target.result),{type:'array',cellDates:false,raw:true});
             doMerge(wbReg, wbIdx);
           }catch(err){ toast('خطأ في قراءة ملف المؤشر: '+err.message,'err'); }
         };
@@ -2819,7 +2840,7 @@ window.idxClassifyFromExcel=function(file){
   var reader=new FileReader();
   reader.onload=function(e){
     try{
-      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:true,raw:true});
+      var wb=XLSX.read(new Uint8Array(e.target.result),{type:'array',cellDates:false,raw:true});
       idxClassifyFromWorkbook(wb);
     }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
   };
