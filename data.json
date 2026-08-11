@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T04:09:48.504Z",
+  "exportedAt": "2026-08-11T04:10:44.103Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8056,6 +8056,28 @@
       "createdAt": "2026-08-11T04:02:46.071Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T04:02:46.071Z"
+    },
+    {
+      "id": "t_mso57ajo_rc4p3",
+      "source": "gov",
+      "subject": "المشاركة في مؤتمر الاطراف لاتفاقية الامم المتحدة الاطارية بشان المناخ cop31",
+      "fromEntity": "وزارة الثروة الزراعية والسمكية وموارد المياه",
+      "letterNo": "2631256991",
+      "letterDate": "2026-08-04",
+      "arrivalDate": "2026-08-04",
+      "referredDate": "2026-08-04",
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "noResponseNeeded",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T04:10:42.084Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T04:10:42.084Z"
     }
   ],
   "idxTopics": [],
@@ -8136,6 +8158,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T04:10:42.084Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "المشاركة في مؤتمر الاطراف لاتفاقية الامم المتحدة ا"
+    },
+    {
+      "ts": "2026-08-11T04:09:51.070Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 356 موضوع"
+    },
     {
       "ts": "2026-08-11T04:08:51.060Z",
       "user": "admin",
