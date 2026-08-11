@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T04:12:49.294Z",
+  "exportedAt": "2026-08-11T04:13:13.521Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8078,6 +8078,28 @@
       "createdAt": "2026-08-11T04:10:42.084Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T04:10:42.084Z"
+    },
+    {
+      "id": "t_mso5ahuk_ttibz",
+      "source": "gov",
+      "subject": "التقرير الختامي والتوصيات الصادرة  عن الورشة التاسيسية لمشروع إزرع عمان 2050",
+      "fromEntity": "غرفة تجارة وصناعة عُمان",
+      "letterNo": "1/671",
+      "letterDate": "2026-08-04",
+      "arrivalDate": "2026-08-04",
+      "referredDate": "2026-08-06",
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "noResponseNeeded",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T04:13:11.516Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T04:13:11.516Z"
     }
   ],
   "idxTopics": [],
@@ -8158,6 +8180,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T04:13:11.516Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "التقرير الختامي والتوصيات الصادرة  عن الورشة التاس"
+    },
+    {
+      "ts": "2026-08-11T04:12:51.882Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 357 موضوع"
+    },
     {
       "ts": "2026-08-11T04:11:51.607Z",
       "user": "admin",
