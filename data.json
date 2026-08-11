@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T05:38:48.634Z",
+  "exportedAt": "2026-08-11T05:39:20.457Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8230,6 +8230,28 @@
       "createdAt": "2026-08-11T05:23:11.778Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T05:23:11.778Z"
+    },
+    {
+      "id": "t_mso8d8o9_q8m3e",
+      "source": "gov",
+      "subject": "برنامج التعاون بين هيئة البيئة والصندوق الدولي للرفق بالحيوان (IFAW).",
+      "fromEntity": "وزارة الخارجية",
+      "letterNo": "10100/40687/31357/2026",
+      "letterDate": "2026-08-03",
+      "arrivalDate": "2026-08-09",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "noResponseNeeded",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T05:39:18.441Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T05:39:18.441Z"
     }
   ],
   "idxTopics": [],
@@ -8310,6 +8332,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T05:39:18.441Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "برنامج التعاون بين هيئة البيئة والصندوق الدولي للر"
+    },
+    {
+      "ts": "2026-08-11T05:38:51.064Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 364 موضوع"
+    },
     {
       "ts": "2026-08-11T05:37:51.716Z",
       "user": "admin",
@@ -11795,20 +11831,6 @@
       "role": "مدير",
       "action": "تصدير نسخة احتياطية",
       "detail": "عدد المواضيع: 1692"
-    },
-    {
-      "ts": "2026-06-29T09:33:45.671Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-06-29T09:33:31.921Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "استيراد إكسل",
-      "detail": "استبدال الكل بـ 1692 موضوع"
     }
   ]
 }
