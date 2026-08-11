@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T04:29:49.322Z",
+  "exportedAt": "2026-08-11T04:30:02.527Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8166,6 +8166,28 @@
       "createdAt": "2026-08-11T04:26:52.031Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T04:26:52.031Z"
+    },
+    {
+      "id": "t_mso5w4e8_y1yk1",
+      "source": "gov",
+      "subject": "البوابة التنسيقية للجهاز الاداري للدولة",
+      "fromEntity": "المركز الوطني للإحصاء والمعلومات",
+      "letterNo": "م و أ م/ 264200020",
+      "letterDate": "2026-08-05",
+      "arrivalDate": "2026-08-09",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "noResponseNeeded",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T04:30:00.512Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T04:30:00.512Z"
     }
   ],
   "idxTopics": [],
@@ -8246,6 +8268,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T04:30:00.513Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "البوابة التنسيقية للجهاز الاداري للدولة"
+    },
+    {
+      "ts": "2026-08-11T04:29:51.754Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 361 موضوع"
+    },
     {
       "ts": "2026-08-11T04:28:51.371Z",
       "user": "admin",
