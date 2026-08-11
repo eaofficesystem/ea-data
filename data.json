@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T06:27:49.488Z",
+  "exportedAt": "2026-08-11T06:28:31.792Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8295,6 +8295,28 @@
       "createdAt": "2026-08-11T06:23:45.956Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T06:23:45.956Z"
+    },
+    {
+      "id": "t_msoa4hxo_5er9y",
+      "source": "gov",
+      "subject": "ندب الفاضل سهيل بن السليمي بن سليمان الوهيبي",
+      "fromEntity": "وزارة التعليم",
+      "letterNo": "2826281294",
+      "letterDate": "2026-08-05",
+      "arrivalDate": "2026-08-05",
+      "referredDate": "2026-08-05",
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "noResponseNeeded",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T06:28:29.773Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T06:28:29.773Z"
     }
   ],
   "idxTopics": [],
@@ -8375,6 +8397,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T06:28:29.773Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "ندب الفاضل سهيل بن السليمي بن سليمان الوهيبي"
+    },
+    {
+      "ts": "2026-08-11T06:27:52.747Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 367 موضوع"
+    },
     {
       "ts": "2026-08-11T06:26:52.524Z",
       "user": "admin",
@@ -11856,20 +11892,6 @@
     },
     {
       "ts": "2026-07-01T10:29:23.371Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T10:28:22.229Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T10:27:21.547Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
