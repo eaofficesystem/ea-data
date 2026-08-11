@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T05:12:48.591Z",
+  "exportedAt": "2026-08-11T05:13:30.356Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8187,6 +8187,28 @@
       "createdAt": "2026-08-11T04:30:00.512Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T04:30:00.512Z"
+    },
+    {
+      "id": "t_mso7g0m4_ta2qr",
+      "source": "companies",
+      "subject": "طلب تخفيض الغرامة المالية المترتبة على المخالفة البيئية رقم (4303)",
+      "fromEntity": "مكتب ناصر بن خميس للاستشارات القانونية",
+      "letterNo": "لا يوجد",
+      "letterDate": "2026-08-09",
+      "arrivalDate": "2026-08-10",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T05:13:28.348Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T05:13:28.348Z"
     }
   ],
   "idxTopics": [],
@@ -8267,6 +8289,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T05:13:28.349Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "طلب تخفيض الغرامة المالية المترتبة على المخالفة ال"
+    },
+    {
+      "ts": "2026-08-11T05:12:52.061Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 362 موضوع"
+    },
     {
       "ts": "2026-08-11T05:11:52.418Z",
       "user": "admin",
@@ -11752,20 +11788,6 @@
       "role": "مدير",
       "action": "رفع GitHub",
       "detail": "رفع 1678 موضوع"
-    },
-    {
-      "ts": "2026-06-28T10:04:35.925Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "استيراد إكسل",
-      "detail": "استيراد 1678 موضوع"
-    },
-    {
-      "ts": "2026-06-28T10:03:44.691Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 0 موضوع"
     }
   ]
 }
