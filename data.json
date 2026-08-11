@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T06:11:49.463Z",
+  "exportedAt": "2026-08-11T06:12:38.802Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8251,6 +8251,28 @@
       "createdAt": "2026-08-11T05:39:18.441Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T05:39:18.441Z"
+    },
+    {
+      "id": "t_mso9k2m1_kkw64",
+      "source": "gov",
+      "subject": "تشكيل اللجنة الصحية بولاية ادم",
+      "fromEntity": "ولاية أدم",
+      "letterNo": "وأ/ 5512/ 459/ 2026م",
+      "letterDate": "2026-08-03",
+      "arrivalDate": "2026-08-05",
+      "referredDate": "2026-08-06",
+      "letterPrepDate": null,
+      "idxCategory": "tarsheeh",
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "ترشيح",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T06:12:36.793Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T06:12:36.793Z"
     }
   ],
   "idxTopics": [],
@@ -8331,6 +8353,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T06:12:36.793Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "تشكيل اللجنة الصحية بولاية ادم"
+    },
+    {
+      "ts": "2026-08-11T06:11:52.569Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 365 موضوع"
+    },
     {
       "ts": "2026-08-11T06:10:51.665Z",
       "user": "admin",
@@ -11812,20 +11848,6 @@
     },
     {
       "ts": "2026-07-01T08:25:23.616Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T08:24:24.208Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T08:23:24.359Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
