@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T06:22:51.474Z",
+  "exportedAt": "2026-08-11T06:23:47.969Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8273,6 +8273,28 @@
       "createdAt": "2026-08-11T06:12:36.793Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T06:17:08.896Z"
+    },
+    {
+      "id": "t_mso9yexw_gp9ry",
+      "source": "gov",
+      "subject": "الإبلاغ عن التقدم المحرز 2025 ـ إطار سنداي للحد من مخاطر الكوارث",
+      "fromEntity": "المكتب السلطاني",
+      "letterNo": "2727979",
+      "letterDate": "2026-08-05",
+      "arrivalDate": "2026-08-06",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T06:23:45.956Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T06:23:45.956Z"
     }
   ],
   "idxTopics": [],
@@ -8353,6 +8375,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T06:23:45.957Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "الإبلاغ عن التقدم المحرز 2025 ـ إطار سنداي للحد من"
+    },
+    {
+      "ts": "2026-08-11T06:22:54.216Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 366 موضوع"
+    },
     {
       "ts": "2026-08-11T06:21:53.926Z",
       "user": "admin",
@@ -11834,20 +11870,6 @@
     },
     {
       "ts": "2026-07-01T10:24:12.703Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T10:24:09.999Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T10:14:24.392Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
