@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T06:15:48.670Z",
+  "exportedAt": "2026-08-11T06:16:15.663Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8264,7 +8264,7 @@
       "letterPrepDate": "2026-08-09",
       "idxCategory": "tarsheeh",
       "status": "responded",
-      "responseDate": null,
+      "responseDate": "2026-08-09",
       "respRaw": "",
       "durationDays": null,
       "content": "ترشيح",
@@ -8272,7 +8272,7 @@
       "notes": "",
       "createdAt": "2026-08-11T06:12:36.793Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-11T06:15:38.869Z"
+      "updatedAt": "2026-08-11T06:16:13.654Z"
     }
   ],
   "idxTopics": [],
@@ -8353,6 +8353,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T06:16:13.655Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "تشكيل اللجنة الصحية بولاية ادم"
+    },
+    {
+      "ts": "2026-08-11T06:15:51.472Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 366 موضوع"
+    },
     {
       "ts": "2026-08-11T06:15:38.870Z",
       "user": "admin",
@@ -11834,20 +11848,6 @@
     },
     {
       "ts": "2026-07-01T10:03:24.281Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T10:02:23.476Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-07-01T10:01:21.842Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
