@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T04:18:48.511Z",
+  "exportedAt": "2026-08-11T04:19:09.511Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8100,6 +8100,28 @@
       "createdAt": "2026-08-11T04:13:11.516Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T04:13:11.516Z"
+    },
+    {
+      "id": "t_mso5i4j2_fyh66",
+      "source": "companies",
+      "subject": "دعوة لحضور حفل افتتاح ملتقى صلالة الهندسي الخامس",
+      "fromEntity": "جمعية المهندسيين العمانية",
+      "letterNo": "ج.م.ع/ 1056/ 2026م",
+      "letterDate": "2026-07-23",
+      "arrivalDate": "2026-08-04",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "دعوة لسعادة الدكتور رئيس الهيئة لحضور افتتاح ملتقى صلالة الهندسي الخامس",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T04:19:07.502Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T04:19:07.502Z"
     }
   ],
   "idxTopics": [],
@@ -8180,6 +8202,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T04:19:07.503Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "دعوة لحضور حفل افتتاح ملتقى صلالة الهندسي الخامس"
+    },
+    {
+      "ts": "2026-08-11T04:18:51.564Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 358 موضوع"
+    },
     {
       "ts": "2026-08-11T04:17:51.228Z",
       "user": "admin",
