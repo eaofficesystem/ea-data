@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T05:40:48.629Z",
+  "exportedAt": "2026-08-11T05:40:57.151Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -5632,13 +5632,13 @@
       "source": "gov",
       "subject": "تنفيذ قرارات الاجتماع الاول للجنة الوطنية للتنافسية لعام 2026م بشان تحسين اداء سلطنة عمان في مؤشر الاداء البيئي",
       "fromEntity": "اللجنة الوطنية التنافسية",
-      "letterNo": 1002,
+      "letterNo": "1002",
       "letterDate": "2026-07-28",
       "arrivalDate": "2026-07-29",
       "referredDate": "2026-07-29",
       "letterPrepDate": null,
       "idxCategory": null,
-      "status": "needsResponse",
+      "status": "responded",
       "responseDate": null,
       "respRaw": "يحتاج رد",
       "durationDays": null,
@@ -5647,8 +5647,7 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.602Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:01:31.129Z",
-      "idxExcluded": true
+      "updatedAt": "2026-08-11T05:40:55.146Z"
     },
     {
       "id": "t_msl9y6l6_c86wh",
@@ -8332,6 +8331,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T05:40:55.146Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "تنفيذ قرارات الاجتماع الاول للجنة الوطنية للتنافسي"
+    },
+    {
+      "ts": "2026-08-11T05:40:51.627Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 365 موضوع"
+    },
     {
       "ts": "2026-08-11T05:39:52.201Z",
       "user": "admin",
@@ -11813,20 +11826,6 @@
     },
     {
       "ts": "2026-06-29T09:58:40.555Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1692 موضوع"
-    },
-    {
-      "ts": "2026-06-29T09:35:14.178Z",
-      "user": "زائر",
-      "role": "",
-      "action": "تحميل GitHub",
-      "detail": "تحميل 5062 موضوع"
-    },
-    {
-      "ts": "2026-06-29T09:34:14.544Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
