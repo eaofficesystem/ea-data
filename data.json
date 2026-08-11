@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T05:32:48.627Z",
+  "exportedAt": "2026-08-11T05:33:12.477Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -6409,14 +6409,14 @@
       "id": "t_msl9y6l6_17xis",
       "source": "gov",
       "subject": "مشاركة الإيسيسكو في الدورة الحادية والثلاثين لمؤتمر الطراف بشأن تغير المناخ",
-      "fromEntity": "وزارة التعليم ",
-      "letterNo": 2826279500,
+      "fromEntity": "وزارة التعليم",
+      "letterNo": "2826279500",
       "letterDate": "2026-07-30",
       "arrivalDate": "2026-08-03",
       "referredDate": null,
-      "letterPrepDate": null,
+      "letterPrepDate": "2026-08-09",
       "idxCategory": null,
-      "status": "needsResponse",
+      "status": "responded",
       "responseDate": null,
       "respRaw": "",
       "durationDays": null,
@@ -6425,7 +6425,7 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.602Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.602Z"
+      "updatedAt": "2026-08-11T05:33:10.456Z"
     },
     {
       "id": "t_msl9y6l6_b8lef",
@@ -8310,6 +8310,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T05:33:10.456Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "مشاركة الإيسيسكو في الدورة الحادية والثلاثين لمؤتم"
+    },
+    {
+      "ts": "2026-08-11T05:32:51.799Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 364 موضوع"
+    },
     {
       "ts": "2026-08-11T05:31:53.627Z",
       "user": "admin",
@@ -11795,20 +11809,6 @@
       "role": "مدير",
       "action": "استيراد إكسل",
       "detail": "استبدال الكل بـ 1692 موضوع"
-    },
-    {
-      "ts": "2026-06-29T09:30:51.935Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "استيراد إكسل",
-      "detail": "استبدال الكل بـ 1692 موضوع"
-    },
-    {
-      "ts": "2026-06-29T09:04:48.582Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "استيراد إكسل",
-      "detail": "استيراد 1692 موضوع"
     }
   ]
 }
