@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T03:56:48.495Z",
+  "exportedAt": "2026-08-11T03:56:52.886Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8012,6 +8012,28 @@
       "createdAt": "2026-08-11T03:47:49.417Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T03:47:49.417Z"
+    },
+    {
+      "id": "t_mso4ph6m_d9fx4",
+      "source": "gov",
+      "subject": "تقرير تقييم الوضع الحالي للنظافة العامة في محافظة شمال الشرقية",
+      "fromEntity": "محافظة شمال الشرقية",
+      "letterNo": "م ش أ/5523/ 601 /2026",
+      "letterDate": "2026-08-03",
+      "arrivalDate": "2026-08-04",
+      "referredDate": "2026-08-04",
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "responded",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T03:56:50.878Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T03:56:50.878Z"
     }
   ],
   "idxTopics": [],
@@ -8092,6 +8114,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T03:56:51.351Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 355 موضوع"
+    },
+    {
+      "ts": "2026-08-11T03:56:50.878Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "تقرير تقييم الوضع الحالي للنظافة العامة في محافظة "
+    },
     {
       "ts": "2026-08-11T03:55:51.920Z",
       "user": "admin",
