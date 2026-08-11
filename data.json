@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T05:29:48.617Z",
+  "exportedAt": "2026-08-11T05:29:53.204Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -5426,11 +5426,11 @@
       "source": "gov",
       "subject": "خطاب دورة تدريبية إقليمية حول جمع وتحليل عينات العوالق الجوية -RAS7045",
       "fromEntity": "وزارة الخارجية",
-      "letterNo": 31831,
+      "letterNo": "31831",
       "letterDate": "2026-07-27",
       "arrivalDate": "2026-07-28",
       "referredDate": "2026-07-28",
-      "letterPrepDate": null,
+      "letterPrepDate": "2026-08-09",
       "idxCategory": null,
       "status": "needsResponse",
       "responseDate": null,
@@ -5441,8 +5441,7 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.602Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:01:31.129Z",
-      "idxExcluded": true
+      "updatedAt": "2026-08-11T05:29:51.193Z"
     },
     {
       "id": "t_msl9y6l6_j7s9e",
@@ -8311,6 +8310,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T05:29:51.505Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 364 موضوع"
+    },
+    {
+      "ts": "2026-08-11T05:29:51.193Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "خطاب دورة تدريبية إقليمية حول جمع وتحليل عينات الع"
+    },
     {
       "ts": "2026-08-11T05:28:51.444Z",
       "user": "admin",
@@ -11796,20 +11809,6 @@
       "role": "مدير",
       "action": "تصدير نسخة احتياطية",
       "detail": "عدد المواضيع: 5062"
-    },
-    {
-      "ts": "2026-06-29T07:33:36.850Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "استيراد إكسل",
-      "detail": "استيراد 1692 موضوع"
-    },
-    {
-      "ts": "2026-06-29T07:28:29.235Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "تصدير نسخة احتياطية",
-      "detail": "عدد المواضيع: 3370"
     }
   ]
 }
