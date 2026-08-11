@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T04:21:49.308Z",
+  "exportedAt": "2026-08-11T04:22:26.148Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8122,6 +8122,28 @@
       "createdAt": "2026-08-11T04:19:07.502Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T04:20:02.862Z"
+    },
+    {
+      "id": "t_mso5mc92_mpiqy",
+      "source": "gov",
+      "subject": "رصد مستويات مرتفعة من الاشعاع في حصائر صحية Health Mats",
+      "fromEntity": "وزارة الصحة",
+      "letterNo": "2623236501",
+      "letterDate": "2026-08-10",
+      "arrivalDate": "2026-08-10",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T04:22:24.134Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T04:22:24.134Z"
     }
   ],
   "idxTopics": [],
@@ -8202,6 +8224,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T04:22:24.135Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "رصد مستويات مرتفعة من الاشعاع في حصائر صحية Health"
+    },
+    {
+      "ts": "2026-08-11T04:21:51.899Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 359 موضوع"
+    },
     {
       "ts": "2026-08-11T04:20:51.642Z",
       "user": "admin",
