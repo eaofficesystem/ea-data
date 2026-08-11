@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-11T06:39:48.685Z",
+  "exportedAt": "2026-08-11T06:39:53.741Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8339,6 +8339,28 @@
       "createdAt": "2026-08-11T06:34:21.436Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T06:34:21.436Z"
+    },
+    {
+      "id": "t_msoaj450_f67km",
+      "source": "gov",
+      "subject": "معالجة التلوث النفطي بمنطقة زكيت بولاية إزكي.",
+      "fromEntity": "محافظة الداخلية",
+      "letterNo": "1152",
+      "letterDate": "2026-08-06",
+      "arrivalDate": "2026-08-09",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": null,
+      "content": "",
+      "allowedDays": null,
+      "notes": "",
+      "createdAt": "2026-08-11T06:39:51.732Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-11T06:39:51.732Z"
     }
   ],
   "idxTopics": [],
@@ -8419,6 +8441,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-11T06:39:51.732Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "معالجة التلوث النفطي بمنطقة زكيت بولاية إزكي."
+    },
+    {
+      "ts": "2026-08-11T06:39:51.316Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 369 موضوع"
+    },
     {
       "ts": "2026-08-11T06:38:53.702Z",
       "user": "admin",
@@ -11904,20 +11940,6 @@
       "role": "مدير",
       "action": "رفع GitHub",
       "detail": "رفع 1727 موضوع"
-    },
-    {
-      "ts": "2026-07-02T04:36:52.142Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1727 موضوع"
-    },
-    {
-      "ts": "2026-07-02T04:36:01.265Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "استيراد إكسل",
-      "detail": "استبدال الكل بـ 1727 موضوع"
     }
   ]
 }
