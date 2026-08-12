@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-12T02:58:49.399Z",
+  "exportedAt": "2026-08-12T02:59:06.887Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8361,6 +8361,28 @@
       "createdAt": "2026-08-11T06:39:51.732Z",
       "createdBy": "admin",
       "updatedAt": "2026-08-11T06:39:51.732Z"
+    },
+    {
+      "id": "t_mspi31gu_lbqmw",
+      "source": "gov",
+      "subject": "التنسيق لعقد اجتماع الدورة السادسة للجنة العمانية - الكورية المشتركة خلال شهر نوفمبر 2026م",
+      "fromEntity": "الهيئة العامة للمناطق الاقتصادية الخاصة والمناطق الحرة",
+      "letterNo": "1513/11/2023v2-19",
+      "letterDate": "2026-08-10",
+      "arrivalDate": "2026-08-10",
+      "referredDate": null,
+      "letterPrepDate": null,
+      "idxCategory": null,
+      "status": "needsResponse",
+      "responseDate": null,
+      "respRaw": "",
+      "durationDays": 1,
+      "content": "",
+      "allowedDays": null,
+      "notes": "تم الرد عن طريق مديرة دائرة التعاون الدولي",
+      "createdAt": "2026-08-12T02:59:04.878Z",
+      "createdBy": "admin",
+      "updatedAt": "2026-08-12T02:59:04.878Z"
     }
   ],
   "idxTopics": [],
@@ -8441,6 +8463,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-12T02:59:04.878Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "إضافة",
+      "detail": "التنسيق لعقد اجتماع الدورة السادسة للجنة العمانية "
+    },
+    {
+      "ts": "2026-08-12T02:58:52.239Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 370 موضوع"
+    },
     {
       "ts": "2026-08-12T02:57:52.549Z",
       "user": "admin",
@@ -11922,20 +11958,6 @@
     },
     {
       "ts": "2026-07-05T04:26:45.873Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 210 موضوع"
-    },
-    {
-      "ts": "2026-07-05T04:25:46.144Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 210 موضوع"
-    },
-    {
-      "ts": "2026-07-05T04:24:45.874Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
