@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-12T02:59:06.887Z",
+  "exportedAt": "2026-08-12T02:59:30.498Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8373,7 +8373,7 @@
       "referredDate": null,
       "letterPrepDate": null,
       "idxCategory": null,
-      "status": "needsResponse",
+      "status": "responded",
       "responseDate": null,
       "respRaw": "",
       "durationDays": 1,
@@ -8382,7 +8382,7 @@
       "notes": "تم الرد عن طريق مديرة دائرة التعاون الدولي",
       "createdAt": "2026-08-12T02:59:04.878Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-12T02:59:04.878Z"
+      "updatedAt": "2026-08-12T02:59:28.494Z"
     }
   ],
   "idxTopics": [],
@@ -8463,6 +8463,13 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-12T02:59:28.494Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "التنسيق لعقد اجتماع الدورة السادسة للجنة العمانية "
+    },
     {
       "ts": "2026-08-12T02:59:04.878Z",
       "user": "admin",
@@ -11951,13 +11958,6 @@
     },
     {
       "ts": "2026-07-05T04:27:46.244Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 210 موضوع"
-    },
-    {
-      "ts": "2026-07-05T04:26:45.873Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
