@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-12T10:33:17.552Z",
+  "exportedAt": "2026-08-12T10:33:43.374Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8460,17 +8460,17 @@
       "arrivalDate": "2026-08-11",
       "referredDate": null,
       "letterPrepDate": null,
-      "idxCategory": null,
+      "idxCategory": "murajaat",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
       "durationDays": null,
-      "content": "الرد بمراجعات",
+      "content": "",
       "allowedDays": null,
       "notes": "",
       "createdAt": "2026-08-12T10:30:36.188Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-12T10:30:36.188Z"
+      "updatedAt": "2026-08-12T10:33:43.210Z"
     },
     {
       "id": "t_mspy7p98_ixpqf",
@@ -8749,6 +8749,13 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-12T10:33:43.210Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "مذكرة تفاهم بين هيئة البيئة والمركز العلمي لموناكو"
+    },
     {
       "ts": "2026-08-12T10:33:15.530Z",
       "user": "admin",
@@ -12241,13 +12248,6 @@
       "role": "مدير",
       "action": "تعديل",
       "detail": "جداول المواقف المنفردة للدول الاعضاء على ملاحظات ا"
-    },
-    {
-      "ts": "2026-07-05T10:09:06.786Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "إخفاء من المؤشر",
-      "detail": "568 موضوع (بقيت في السجل)"
     }
   ]
 }
