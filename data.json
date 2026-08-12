@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-12T10:43:47.953Z",
+  "exportedAt": "2026-08-12T10:44:41.282Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -13,7 +13,6 @@
       "arrivalDate": "2026-06-16",
       "referredDate": "2026-06-16",
       "letterPrepDate": "2026-06-21",
-      "idxCategory": "taqreer",
       "status": "responded",
       "responseDate": "2026-06-21",
       "respRaw": "",
@@ -23,7 +22,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.599Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.599Z"
+      "updatedAt": "2026-08-12T10:44:39.277Z",
+      "idxCategory": "taqreer"
     },
     {
       "id": "t_msl9y6l3_enny9",
@@ -150,7 +150,6 @@
       "arrivalDate": "2026-06-16",
       "referredDate": "2026-06-16",
       "letterPrepDate": "2026-07-05",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-05",
       "respRaw": "",
@@ -160,7 +159,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.599Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.599Z"
+      "updatedAt": "2026-08-12T10:44:39.277Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l3_68meh",
@@ -310,7 +310,6 @@
       "arrivalDate": "2026-06-17",
       "referredDate": "2026-06-17",
       "letterPrepDate": "2026-06-21",
-      "idxCategory": "taqreer",
       "status": "responded",
       "responseDate": "2026-06-25",
       "respRaw": "",
@@ -320,7 +319,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.599Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.599Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "taqreer"
     },
     {
       "id": "t_msl9y6l3_as8ff",
@@ -378,7 +378,6 @@
       "arrivalDate": "2026-06-17",
       "referredDate": "2026-06-17",
       "letterPrepDate": "2026-06-21",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-06-30",
       "respRaw": "",
@@ -388,7 +387,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_hjzg7",
@@ -630,7 +630,6 @@
       "arrivalDate": "2026-06-22",
       "referredDate": "2026-06-24",
       "letterPrepDate": "2026-06-25",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-01",
       "respRaw": "",
@@ -640,7 +639,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_hqp0n",
@@ -882,7 +882,6 @@
       "arrivalDate": "2026-06-22",
       "referredDate": "2026-06-22",
       "letterPrepDate": "2026-06-23",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-06-24",
       "respRaw": "",
@@ -892,7 +891,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_og2mh",
@@ -904,7 +904,6 @@
       "arrivalDate": "2026-06-22",
       "referredDate": "2026-06-24",
       "letterPrepDate": "2026-06-23",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-13",
       "respRaw": "",
@@ -914,7 +913,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_pxehe",
@@ -949,7 +949,6 @@
       "arrivalDate": "2026-06-24",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-06-29",
-      "idxCategory": "taqreer",
       "status": "responded",
       "responseDate": "2026-07-13",
       "respRaw": "",
@@ -959,7 +958,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "taqreer"
     },
     {
       "id": "t_msl9y6l4_71rlg",
@@ -994,7 +994,6 @@
       "arrivalDate": "2026-06-24",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-06-29",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-06-30",
       "respRaw": "",
@@ -1004,7 +1003,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_tmrxq",
@@ -1016,7 +1016,6 @@
       "arrivalDate": "2026-06-24",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-06-24",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-06-29",
       "respRaw": "",
@@ -1026,7 +1025,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_tpdh4",
@@ -1061,7 +1061,6 @@
       "arrivalDate": "2026-06-24",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-06-24",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-06-25",
       "respRaw": "",
@@ -1071,7 +1070,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_7wexr",
@@ -1106,7 +1106,6 @@
       "arrivalDate": "2026-06-24",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-07-09",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -1116,7 +1115,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_1ysoh",
@@ -1151,7 +1151,6 @@
       "arrivalDate": "2026-06-25",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-06-29",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-06-30",
       "respRaw": "",
@@ -1161,7 +1160,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:01:04.029Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_n9p2b",
@@ -1173,7 +1173,6 @@
       "arrivalDate": "2026-06-25",
       "referredDate": "2026-06-28",
       "letterPrepDate": "2026-06-28",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-06-30",
       "respRaw": "",
@@ -1183,7 +1182,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_x92nu",
@@ -1264,7 +1264,6 @@
       "arrivalDate": "2026-06-25",
       "referredDate": "2026-06-28",
       "letterPrepDate": "2026-07-01",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -1274,7 +1273,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_cgfyn",
@@ -1355,7 +1355,6 @@
       "arrivalDate": "2026-06-25",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-07-01",
-      "idxCategory": "taqreer",
       "status": "responded",
       "responseDate": "2026-07-01",
       "respRaw": "",
@@ -1365,7 +1364,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "taqreer"
     },
     {
       "id": "t_msl9y6l4_0ksku",
@@ -1446,7 +1446,6 @@
       "arrivalDate": "2026-06-25",
       "referredDate": "2026-06-28",
       "letterPrepDate": "2026-06-29",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-06-29",
       "respRaw": "",
@@ -1456,7 +1455,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_p1tgg",
@@ -1468,7 +1468,6 @@
       "arrivalDate": "2026-06-25",
       "referredDate": "2026-06-25",
       "letterPrepDate": "2026-06-29",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -1478,7 +1477,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_6y1gw",
@@ -1559,7 +1559,6 @@
       "arrivalDate": "2026-06-28",
       "referredDate": "2026-07-01",
       "letterPrepDate": "2026-07-01",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -1569,7 +1568,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_f08m1",
@@ -1604,7 +1604,6 @@
       "arrivalDate": "2026-06-28",
       "referredDate": "2026-06-30",
       "letterPrepDate": "2026-07-01",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-12",
       "respRaw": "",
@@ -1614,7 +1613,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_1cuy9",
@@ -1672,7 +1672,6 @@
       "arrivalDate": "2026-06-29",
       "referredDate": "2026-06-30",
       "letterPrepDate": "2026-07-13",
-      "idxCategory": "taqreer",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -1682,7 +1681,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "taqreer"
     },
     {
       "id": "t_msl9y6l4_unxye",
@@ -1832,7 +1832,6 @@
       "arrivalDate": "2026-06-30",
       "referredDate": "2026-06-30",
       "letterPrepDate": "2026-07-14",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -1842,7 +1841,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_nghnq",
@@ -2037,7 +2037,6 @@
       "arrivalDate": "2026-07-02",
       "referredDate": null,
       "letterPrepDate": "2026-07-13",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -2047,7 +2046,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_pyf5c",
@@ -2082,7 +2082,6 @@
       "arrivalDate": "2026-07-02",
       "referredDate": "2026-07-13",
       "letterPrepDate": "2026-07-20",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-22",
       "respRaw": "",
@@ -2092,7 +2091,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_w4wgv",
@@ -2104,7 +2104,6 @@
       "arrivalDate": "2026-07-05",
       "referredDate": "2026-07-09",
       "letterPrepDate": "2026-07-20",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-20",
       "respRaw": "",
@@ -2114,7 +2113,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_2xq3t",
@@ -2126,7 +2126,6 @@
       "arrivalDate": "2026-07-05",
       "referredDate": "2026-07-09",
       "letterPrepDate": "2026-07-12",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-20",
       "respRaw": "",
@@ -2136,7 +2135,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_74naw",
@@ -2194,7 +2194,6 @@
       "arrivalDate": "2026-07-05",
       "referredDate": "2026-07-09",
       "letterPrepDate": null,
-      "idxCategory": "dirasa",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -2204,7 +2203,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_3leg8",
@@ -2331,7 +2331,6 @@
       "arrivalDate": "2026-07-06",
       "referredDate": "2026-07-08",
       "letterPrepDate": "2026-07-13",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -2341,7 +2340,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_va5vl",
@@ -2353,7 +2353,6 @@
       "arrivalDate": "2026-07-06",
       "referredDate": "2026-07-08",
       "letterPrepDate": "2026-07-22",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-22",
       "respRaw": "",
@@ -2363,7 +2362,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_khw4j",
@@ -2375,7 +2375,6 @@
       "arrivalDate": "2026-07-06",
       "referredDate": "2026-07-08",
       "letterPrepDate": "2026-07-08",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-08",
       "respRaw": "",
@@ -2385,7 +2384,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_1zxxk",
@@ -2489,7 +2489,6 @@
       "arrivalDate": "2026-07-07",
       "referredDate": "2026-07-07",
       "letterPrepDate": "2026-07-07",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-08",
       "respRaw": "",
@@ -2499,7 +2498,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l4_fk6kr",
@@ -2511,7 +2511,6 @@
       "arrivalDate": "2026-07-08",
       "referredDate": "2026-07-08",
       "letterPrepDate": "2026-07-08",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-08",
       "respRaw": "",
@@ -2521,7 +2520,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_g4ilr",
@@ -2648,7 +2648,6 @@
       "arrivalDate": "2026-07-08",
       "referredDate": "2026-07-09",
       "letterPrepDate": "2026-07-09",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -2658,7 +2657,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.600Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.600Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l4_q18si",
@@ -2877,7 +2877,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-09",
       "letterPrepDate": "2026-07-12",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-13",
       "respRaw": "",
@@ -2887,7 +2886,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_oz3pz",
@@ -2922,7 +2922,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-16",
-      "idxCategory": "taqreer",
       "status": "responded",
       "responseDate": "2026-07-16",
       "respRaw": "",
@@ -2932,7 +2931,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "taqreer"
     },
     {
       "id": "t_msl9y6l5_gzlzx",
@@ -2944,7 +2944,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-13",
       "letterPrepDate": "2026-07-20",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-28",
       "respRaw": "",
@@ -2954,7 +2953,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_aersh",
@@ -3127,7 +3127,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-12",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-13",
       "respRaw": "",
@@ -3137,7 +3136,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_821u4",
@@ -3264,7 +3264,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-16",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-20",
       "respRaw": "",
@@ -3274,7 +3273,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_xas6o",
@@ -3332,7 +3332,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-13",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-14",
       "respRaw": "",
@@ -3342,7 +3341,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_o0mf2",
@@ -3423,7 +3423,6 @@
       "arrivalDate": "2026-07-09",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-14",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-16",
       "respRaw": "",
@@ -3433,7 +3432,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_ezi04",
@@ -3491,7 +3491,6 @@
       "arrivalDate": "2026-07-12",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-16",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-26",
       "respRaw": "",
@@ -3501,7 +3500,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_yul68",
@@ -3513,7 +3513,6 @@
       "arrivalDate": "2026-07-12",
       "referredDate": "2026-07-12",
       "letterPrepDate": "2026-07-15",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-19",
       "respRaw": "",
@@ -3523,7 +3522,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_ijj85",
@@ -3834,7 +3834,6 @@
       "arrivalDate": "2026-07-13",
       "referredDate": "2026-07-15",
       "letterPrepDate": "2026-07-19",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-20",
       "respRaw": "",
@@ -3844,7 +3843,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_q72ma",
@@ -3994,7 +3994,6 @@
       "arrivalDate": "2026-07-14",
       "referredDate": "2026-07-15",
       "letterPrepDate": "2026-07-21",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-21",
       "respRaw": "",
@@ -4004,7 +4003,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_de6n8",
@@ -4016,7 +4016,6 @@
       "arrivalDate": "2026-07-14",
       "referredDate": "2026-07-15",
       "letterPrepDate": "2026-07-15",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-20",
       "respRaw": "",
@@ -4026,7 +4025,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_g14c5",
@@ -4061,7 +4061,6 @@
       "arrivalDate": "2026-07-15",
       "referredDate": "2026-07-15",
       "letterPrepDate": "2026-07-16",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-16",
       "respRaw": "",
@@ -4071,7 +4070,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.278Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_vhk0n",
@@ -4244,7 +4244,6 @@
       "arrivalDate": "2026-07-16",
       "referredDate": "2026-07-17",
       "letterPrepDate": "2026-07-19",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-20",
       "respRaw": "",
@@ -4254,7 +4253,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_5tdcf",
@@ -4289,7 +4289,6 @@
       "arrivalDate": "2026-07-19",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-22",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-22",
       "respRaw": "",
@@ -4299,7 +4298,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_s2c9w",
@@ -4311,7 +4311,6 @@
       "arrivalDate": "2026-07-19",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-26",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-26",
       "respRaw": "",
@@ -4321,7 +4320,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_26zm6",
@@ -4333,7 +4333,6 @@
       "arrivalDate": "2026-07-19",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-22",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-26",
       "respRaw": "",
@@ -4343,7 +4342,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_288cy",
@@ -4378,7 +4378,6 @@
       "arrivalDate": "2026-07-19",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-22",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-22",
       "respRaw": "",
@@ -4388,7 +4387,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_esk9j",
@@ -4423,7 +4423,6 @@
       "arrivalDate": "2026-07-19",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-22",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-26",
       "respRaw": "",
@@ -4433,7 +4432,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_remmj",
@@ -4583,7 +4583,6 @@
       "arrivalDate": "2026-07-20",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-21",
-      "idxCategory": "dirasa",
       "status": "responded",
       "responseDate": "2026-07-22",
       "respRaw": "",
@@ -4593,7 +4592,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l5_tjbrs",
@@ -4720,7 +4720,6 @@
       "arrivalDate": "2026-07-21",
       "referredDate": "2026-07-21",
       "letterPrepDate": "2026-07-23",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-07-26",
       "respRaw": "",
@@ -4730,7 +4729,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.601Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.601Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l5_5modl",
@@ -6234,7 +6234,6 @@
       "arrivalDate": "2026-08-02",
       "referredDate": "2026-08-02",
       "letterPrepDate": null,
-      "idxCategory": "tarsheeh",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -6244,7 +6243,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.602Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:01:04.029Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l6_ilza3",
@@ -6302,7 +6302,6 @@
       "arrivalDate": "2026-08-02",
       "referredDate": "2026-08-02",
       "letterPrepDate": null,
-      "idxCategory": "dirasa",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -6312,7 +6311,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.602Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.602Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "dirasa"
     },
     {
       "id": "t_msl9y6l6_wysmj",
@@ -6324,7 +6324,6 @@
       "arrivalDate": "2026-08-02",
       "referredDate": "2026-08-02",
       "letterPrepDate": null,
-      "idxCategory": "tarsheeh",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -6334,7 +6333,8 @@
       "notes": "",
       "createdAt": "2026-08-09T04:00:16.602Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-09T04:00:16.602Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "tarsheeh"
     },
     {
       "id": "t_msl9y6l6_4ugik",
@@ -8152,7 +8152,6 @@
       "arrivalDate": "2026-08-04",
       "referredDate": "2026-08-04",
       "letterPrepDate": null,
-      "idxCategory": "dirasa",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "",
@@ -8262,7 +8261,6 @@
       "arrivalDate": "2026-08-05",
       "referredDate": "2026-08-06",
       "letterPrepDate": "2026-08-09",
-      "idxCategory": "tarsheeh",
       "status": "responded",
       "responseDate": "2026-08-09",
       "respRaw": "",
@@ -8416,7 +8414,7 @@
       "arrivalDate": "2026-08-12",
       "referredDate": null,
       "letterPrepDate": null,
-      "idxCategory": null,
+      "idxCategory": "tarsheeh",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -8426,7 +8424,7 @@
       "notes": "",
       "createdAt": "2026-08-12T10:30:36.188Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-12T10:33:15.529Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z"
     },
     {
       "id": "t_mspy7p98_3pals",
@@ -8460,7 +8458,6 @@
       "arrivalDate": "2026-08-11",
       "referredDate": null,
       "letterPrepDate": null,
-      "idxCategory": "murajaat",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -8470,7 +8467,8 @@
       "notes": "",
       "createdAt": "2026-08-12T10:30:36.188Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-12T10:33:43.210Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z",
+      "idxCategory": "murajaat"
     },
     {
       "id": "t_mspy7p98_ixpqf",
@@ -8482,7 +8480,7 @@
       "arrivalDate": "2026-08-11",
       "referredDate": null,
       "letterPrepDate": null,
-      "idxCategory": null,
+      "idxCategory": "okhra",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
@@ -8492,7 +8490,7 @@
       "notes": "",
       "createdAt": "2026-08-12T10:30:36.188Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-12T10:30:36.188Z"
+      "updatedAt": "2026-08-12T10:44:39.279Z"
     },
     {
       "id": "t_mspy7p98_xnp2y",
@@ -8749,6 +8747,20 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-12T10:44:39.281Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تصنيف من إكسل",
+      "detail": "60 موضوع طوبق، 60 حُدّث"
+    },
+    {
+      "ts": "2026-08-12T10:43:51.405Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 384 موضوع"
+    },
     {
       "ts": "2026-08-12T10:42:50.142Z",
       "user": "admin",
@@ -12230,20 +12242,6 @@
     },
     {
       "ts": "2026-07-06T03:43:21.502Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 994 موضوع"
-    },
-    {
-      "ts": "2026-07-06T03:42:21.274Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 994 موضوع"
-    },
-    {
-      "ts": "2026-07-06T03:41:22.010Z",
       "user": "admin",
       "role": "مدير",
       "action": "رفع GitHub",
