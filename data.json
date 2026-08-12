@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-12T07:04:01.788Z",
+  "exportedAt": "2026-08-12T07:07:49.267Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -8285,7 +8285,7 @@
       "referredDate": null,
       "letterPrepDate": null,
       "idxCategory": null,
-      "status": "needsResponse",
+      "status": "noResponseNeeded",
       "responseDate": null,
       "respRaw": "",
       "durationDays": null,
@@ -8294,7 +8294,7 @@
       "notes": "",
       "createdAt": "2026-08-11T06:23:45.956Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-11T06:23:45.956Z"
+      "updatedAt": "2026-08-12T07:07:47.257Z"
     },
     {
       "id": "t_msoa4hxo_5er9y",
@@ -8463,6 +8463,13 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-12T07:07:47.258Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "الإبلاغ عن التقدم المحرز 2025 ـ إطار سنداي للحد من"
+    },
     {
       "ts": "2026-08-12T07:03:59.784Z",
       "user": "admin",
@@ -11955,13 +11962,6 @@
       "role": "مدير",
       "action": "حذف غير المصنّف",
       "detail": "784 موضوع"
-    },
-    {
-      "ts": "2026-07-05T05:01:41.763Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 1460 موضوع"
     }
   ]
 }
