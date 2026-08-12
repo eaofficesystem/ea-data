@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-07-16.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-07-17.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -576,7 +576,7 @@ function loadIdxCats(){
 function saveIdxCats(list){
   IDX_CATEGORIES=list;
   try{ localStorage.setItem(IDX_CAT_KEY,JSON.stringify(list)); }catch(e){}
-  if(S.session && S.session.role==='admin') ghPushSilent();
+  if(S.session && (S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
 }
 function idxCat(key){ for(var i=0;i<IDX_CATEGORIES.length;i++){ if(IDX_CATEGORIES[i].key===key) return IDX_CATEGORIES[i]; } return null; }
 
@@ -691,7 +691,7 @@ var S = {
 function idxLoad(){ try{ var r=localStorage.getItem(IDX_SK); if(r){ var p=JSON.parse(r); if(Array.isArray(p)) S.idxTopics=p; } }catch(e){ S.idxTopics=[]; } }
 function idxSave(){
   try{ localStorage.setItem(IDX_SK,JSON.stringify(S.idxTopics)); }catch(e){}
-  if(S.session && S.session.role==='admin') ghPushSilent();
+  if(S.session && (S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
 }
 
 /* ═══════════════ DATE UTILS ════════════════ */
@@ -793,7 +793,7 @@ function kpiLbl(k,t){
 function save(){
   try{ localStorage.setItem(SK,JSON.stringify(S.topics)); }catch(e){}
   // رفع تلقائي لـ GitHub بعد كل تعديل
-  if(S.session && S.session.role==='admin') ghPushSilent();
+  if(S.session && (S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
 }
 function load(){
   try{ var r=localStorage.getItem(SK); if(r) S.topics=JSON.parse(r); }catch(e){ S.topics=[]; }
@@ -1057,6 +1057,7 @@ function showExcelImportChoice(allNew, counts){
     if(!res.fresh.length){ cl(); toast('كل مواضيع الملف موجودة أصلاً ('+res.dup+' مكرر) — لم يُضف شيء','ok'); return; }
     S.topics=S.topics.concat(res.fresh);
     save(); addLog('استيراد إكسل','إضافة '+res.fresh.length+' جديد، تخطّي '+res.dup+' مكرر'); renderAll();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     var ix1=document.getElementById('indexScreen'); if(ix1&&!ix1.classList.contains('hidden')) idxRenderAll();
     cl();
     toast('أُضيف '+res.fresh.length+' موضوع جديد'+(res.dup?' — تُخطّي '+res.dup+' مكرر':''),'ok');
@@ -1076,6 +1077,7 @@ function showExcelImportChoice(allNew, counts){
     autoSnapshot('قبل استيراد إكسل (استبدال)');
     S.topics=kept.concat(allNew);
     save(); addLog('استيراد إكسل','استبدال '+replacedLabels.join('، ')+' بـ '+allNew.length+' موضوع'); renderAll();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     var ix2=document.getElementById('indexScreen'); if(ix2&&!ix2.classList.contains('hidden')) idxRenderAll();
     cl();
     finishExcelImport(allNew.length, counts, 'استبدال');
@@ -1336,6 +1338,7 @@ function openTopicModal(topic, viewOnly){
     if(isNew){ S.topics.push(rec); addLog('إضافة', rec.subject.slice(0,50)); toast('تمت الإضافة','ok'); }
     else{ var ix=S.topics.findIndex(function(x){ return x.id===rec.id; }); if(ix>=0) S.topics[ix]=rec; addLog('تعديل', rec.subject.slice(0,50)); toast('تم الحفظ','ok'); }
     save(); S.src=rec.source; closeModal(); renderAll();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     var ixScr=document.getElementById('indexScreen');
     if(ixScr && !ixScr.classList.contains('hidden')) idxRenderAll();
   };
@@ -1353,6 +1356,7 @@ function confirmDel(t){
   document.getElementById('dconfirm').onclick=function(){
     S.topics=S.topics.filter(function(x){ return x.id!==t.id; });
     save(); addLog('حذف', t.subject ? t.subject.slice(0,50) : ''); closeModal(); renderAll(); toast('تم الحذف','ok');
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
   };
 }
 
@@ -1659,6 +1663,7 @@ window.doRestore=function doRestore(file){
       document.getElementById('rest_replace').onclick=function(){
         S.topics=topics; save(); closeModal(); renderAll();
         addLog('استيراد نسخة احتياطية — استبدال','عدد المواضيع: '+topics.length);
+        if(S.session&&S.session.role==='admin') ghPushSilent();
         toast('تم استيراد '+topics.length+' موضوع (استبدال كامل)','ok');
       };
       document.getElementById('rest_merge').onclick=function(){
@@ -1667,6 +1672,7 @@ window.doRestore=function doRestore(file){
         var newOnes=topics.filter(function(t){ return !existIds.has(t.id); });
         S.topics=S.topics.concat(newOnes); save(); closeModal(); renderAll();
         addLog('استيراد نسخة احتياطية — دمج','مضاف: '+newOnes.length+' | موجود مسبقاً: '+(topics.length-newOnes.length));
+        if(S.session&&S.session.role==='admin') ghPushSilent();
         toast('تم إضافة '+newOnes.length+' موضوع جديد (تجاهل '+( topics.length-newOnes.length)+' مكرر)','ok');
       };
     }catch(err){ toast('خطأ في قراءة الملف: '+err.message,'err'); }
@@ -1759,7 +1765,7 @@ function applyRole(){
   if(mgB) mgB.classList.toggle('hidden',role!=='admin');
   var wpB=document.getElementById('wipeAllBtn');
   if(wpB) wpB.classList.toggle('hidden',role!=='admin');
-  document.getElementById('syncPageBtn').classList.toggle('hidden',role!=='admin');
+  document.getElementById('syncPageBtn').classList.toggle('hidden',!(role==='admin'||role==='editor'));
   var chip=document.getElementById('ghStatusChip');
   if(chip) chip.style.display=(role==='admin'?'inline-block':'none');
   document.getElementById('backupPageBtn').classList.toggle('hidden',role!=='admin');
@@ -1970,7 +1976,7 @@ window.wipeAllTopics=function(){
   autoSnapshot('قبل مسح كل المواضيع ('+n+')');
   S.topics=[];
   save();
-  if(S.session&&S.session.role==='admin') ghPushSilent();
+  if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
   addLog('مسح كل المواضيع', n+' موضوع');
   renderAll();
   var ix=document.getElementById('indexScreen'); if(ix&&!ix.classList.contains('hidden')) idxRenderAll();
@@ -1984,7 +1990,7 @@ window.idxDeleteTopic=function(id){
   autoSnapshot('قبل حذف موضوع من المؤشر');
   S.topics=S.topics.filter(function(x){ return x.id!==id; });
   save();
-  if(S.session&&S.session.role==='admin') ghPushSilent();
+  if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
   addLog('حذف موضوع', (t.subject||'').slice(0,50));
   renderAll(); idxRenderAll();
   toast('تم حذف الموضوع','ok');
@@ -2009,6 +2015,7 @@ window.restoreLastGood=function restoreLastGood(){
     if(!confirm('استرجاع آخر نسخة محلية تلقائية؟\n\nالتاريخ: '+snap.savedAt+'\nعدد المواضيع: '+(snap.topics||[]).length+'\n\nسيتم استبدال البيانات الحالية.')) return;
     S.topics=snap.topics||[];
     save(); renderAll();
+    if(S.session&&S.session.role==='admin') ghPushSilent();
     toast('تم الاسترجاع — '+S.topics.length+' موضوع','ok');
   }catch(e){ toast('تعذّر الاسترجاع: '+e.message,'err'); }
 }
@@ -2184,7 +2191,7 @@ window.toggleAutoSync=function toggleAutoSync(){
     showGhInfo('⏸️ تم إيقاف المزامنة التلقائية','#fef9e7');
   } else {
     var cfg=getGHConfig(); if(!cfg){ toast('يرجى إعداد GitHub أولاً','err'); return; }
-    autoSyncInterval=setInterval(function(){ if(S.session&&S.session.role==='admin') uploadToGitHub(); else downloadFromGitHub(); },60000);
+    autoSyncInterval=setInterval(function(){ if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) uploadToGitHub(); else downloadFromGitHub(); },60000);
     btn.textContent='⏸️ إيقاف المزامنة التلقائية'; btn.style.background='#1d8349';
     showGhInfo('✅ المزامنة التلقائية مفعّلة (كل 60 ثانية)','#e8f8f5');
   }
@@ -2741,7 +2748,7 @@ function doMerge(wbReg, wbIdx){
       S.topics=S.topics.concat(res.fresh);
     }
     save();
-    if(S.session&&S.session.role==='admin') ghPushSilent();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     addLog('استيراد ودمج', added+' موضوع، صُنّف '+classified+(dup?'، تُخطّي '+dup+' مكرر':''));
     cl(); renderAll();
     var ix=document.getElementById('indexScreen'); if(ix&&!ix.classList.contains('hidden')) idxRenderAll();
@@ -2829,7 +2836,7 @@ window.idxClassifyFromWorkbook=function(wb){
       });
 
       save();
-      if(S.session&&S.session.role==='admin') ghPushSilent();
+      if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
       addLog('تصنيف من إكسل', matched+' موضوع طوبق، '+updated+' حُدّث');
       idxClassifyReport(totalRows, matched, updated, byCatCount);
       renderAll(); idxRenderAll();
@@ -2866,7 +2873,7 @@ function idxClassifyReport(total, matched, updated, byCat){
   document.getElementById('modals').innerHTML=html;
   var done=function(){
     save();
-    if(S.session&&S.session.role==='admin') ghPushSilent();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     addLog('تصنيف من إكسل', matched+' موضوع طوبق، '+updated+' حُدّث');
     closeModal();
     renderAll();
@@ -2915,7 +2922,7 @@ window.idxClearUncat=function(){
     autoSnapshot('قبل إخفاء غير المصنّف من المؤشر ('+uncat.length+')');
     S.topics.forEach(function(t){ if(ids[t.id]){ t.idxExcluded=true; t.updatedAt=new Date().toISOString(); } });
     save();
-    if(S.session&&S.session.role==='admin') ghPushSilent();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     addLog('إخفاء من المؤشر', uncat.length+' موضوع (بقيت في السجل)');
     cl(); renderAll(); idxRenderAll();
     toast('أُخفي '+uncat.length+' موضوع من المؤشر — ما زالت في السجل','ok');
@@ -2926,7 +2933,7 @@ window.idxClearUncat=function(){
     autoSnapshot('قبل حذف غير المصنّف ('+uncat.length+')');
     S.topics=S.topics.filter(function(t){ return !ids[t.id]; });
     save();
-    if(S.session&&S.session.role==='admin') ghPushSilent();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     addLog('حذف غير المصنّف', uncat.length+' موضوع');
     cl(); renderAll(); idxRenderAll();
     toast('تم حذف '+uncat.length+' موضوع نهائياً','ok');
@@ -2938,7 +2945,7 @@ window.idxClearUncat=function(){
     var n=0;
     S.topics.forEach(function(t){ if(t.source==='gov'&&t.idxExcluded){ delete t.idxExcluded; t.updatedAt=new Date().toISOString(); n++; } });
     save();
-    if(S.session&&S.session.role==='admin') ghPushSilent();
+    if(S.session&&(S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
     addLog('إرجاع للمؤشر', n+' موضوع');
     cl(); renderAll(); idxRenderAll();
     toast('أُرجع '+n+' موضوع للمؤشر','ok');
