@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-13T03:37:27.427Z",
+  "exportedAt": "2026-08-13T06:40:52.114Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -470,13 +470,13 @@
       "source": "gov",
       "subject": "مقترحات تنظيمية وفنية للحد من الآثار البيئة والصحية لعبوات  مياه الشرب البلاستسكية.pdf",
       "fromEntity": "بلدية مسقط",
-      "letterNo": 965,
+      "letterNo": "965",
       "letterDate": "2026-06-21",
       "arrivalDate": "2026-06-22",
       "referredDate": "2026-06-22",
       "letterPrepDate": null,
       "idxCategory": null,
-      "status": "needsResponse",
+      "status": "noResponseNeeded",
       "responseDate": null,
       "respRaw": "يحتاج رد",
       "durationDays": null,
@@ -485,7 +485,7 @@
       "notes": "",
       "createdAt": "2026-08-12T10:56:21.412Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-12T10:56:21.412Z"
+      "updatedAt": "2026-08-13T06:40:50.090Z"
     },
     {
       "id": "t_mspz4tk4_lctum",
@@ -8289,6 +8289,20 @@
   ],
   "log": [
     {
+      "ts": "2026-08-13T06:40:50.090Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "مقترحات تنظيمية وفنية للحد من الآثار البيئة والصحي"
+    },
+    {
+      "ts": "2026-08-13T03:37:30.248Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "رفع GitHub",
+      "detail": "رفع 373 موضوع"
+    },
+    {
       "ts": "2026-08-13T03:36:42.716Z",
       "user": "admin",
       "role": "مدير",
@@ -11769,20 +11783,6 @@
     },
     {
       "ts": "2026-07-06T03:59:55.564Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "تعديل",
-      "detail": "دعوة لعقد ورشة عمل مشتركة لفريق الامن النووي.pdf"
-    },
-    {
-      "ts": "2026-07-06T03:59:19.885Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "رفع GitHub",
-      "detail": "رفع 994 موضوع"
-    },
-    {
-      "ts": "2026-07-06T03:59:12.132Z",
       "user": "admin",
       "role": "مدير",
       "action": "تعديل",
