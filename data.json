@@ -1,6 +1,6 @@
 {
   "version": "1.1",
-  "exportedAt": "2026-08-13T03:32:39.791Z",
+  "exportedAt": "2026-08-13T03:34:34.190Z",
   "exportedBy": "admin",
   "topics": [
     {
@@ -6569,17 +6569,17 @@
       "arrivalDate": "2026-08-11",
       "referredDate": null,
       "letterPrepDate": null,
+      "idxCategory": "murajaat",
       "status": "needsResponse",
       "responseDate": null,
       "respRaw": "يحتاج رد",
       "durationDays": null,
-      "content": "الرد بمراجعات",
+      "content": "",
       "allowedDays": null,
       "notes": "",
       "createdAt": "2026-08-12T10:56:21.414Z",
       "createdBy": "admin",
-      "updatedAt": "2026-08-13T03:32:29.632Z",
-      "idxCategory": "murajaat"
+      "updatedAt": "2026-08-13T03:34:32.169Z"
     },
     {
       "id": "t_mspz4tk6_vua74",
@@ -8288,6 +8288,13 @@
     }
   ],
   "log": [
+    {
+      "ts": "2026-08-13T03:34:32.170Z",
+      "user": "admin",
+      "role": "مدير",
+      "action": "تعديل",
+      "detail": "مذكرة تفاهم بين هيئة البيئة والمركز العلمي لموناكو"
+    },
     {
       "ts": "2026-08-13T03:32:37.778Z",
       "user": "admin",
@@ -11776,13 +11783,6 @@
     },
     {
       "ts": "2026-07-06T03:58:16.359Z",
-      "user": "admin",
-      "role": "مدير",
-      "action": "تعديل",
-      "detail": "دعوة لعقد ورشة عمل مشتركة لفريق الامن النووي.pdf"
-    },
-    {
-      "ts": "2026-07-06T03:57:52.743Z",
       "user": "admin",
       "role": "مدير",
       "action": "تعديل",
