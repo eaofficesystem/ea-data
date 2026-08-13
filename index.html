@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-07-17.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-08-12.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -792,6 +792,7 @@ function kpiLbl(k,t){
 /* ═══════════════ STORAGE ════════════════ */
 function save(){
   try{ localStorage.setItem(SK,JSON.stringify(S.topics)); }catch(e){}
+  window._lastLocalEditAt=Date.now(); // نسجّل وقت آخر تعديل محلي لحماية من كتابة تحميل قديم فوقه
   // رفع تلقائي لـ GitHub بعد كل تعديل
   if(S.session && (S.session.role==='admin'||S.session.role==='editor')) ghPushSilent();
 }
@@ -800,6 +801,9 @@ function load(){
 }
 async function loadFromGitHub(){
   var pub=getGHPublic(); if(!pub||!pub.user||!pub.repo) return;
+  // حماية: لو فيه تعديل محلي حديث (خلال آخر 8 ثوانٍ) لم يكتمل رفعه بعد للسحابة،
+  // لا نكتب فوقه ببيانات سحابية قد تكون أقدم منه (يمنع فقدان بيانات مثل "مسح ثم إضافة" بتتابع سريع)
+  if(window._lastLocalEditAt && (Date.now()-window._lastLocalEditAt)<8000) return;
   try{
     var url='https://raw.githubusercontent.com/'+pub.user+'/'+pub.repo+'/main/'+GH_DATA_FILE+'?t='+Date.now();
     var res=await fetch(url,{cache:'no-store'});
@@ -1100,37 +1104,38 @@ function filtered(){
   if(S.kpiF) list=list.filter(function(t){ return kpi(t).bucket===S.kpiF; });
   var sb=S.sortBy||'arrival_asc';
   var stOrder={needsResponse:0, responded:1, noResponseNeeded:2};
+  function subjCmp(a,b){ return String(a.subject||'').localeCompare(String(b.subject||''),'ar'); }
   list.sort(function(a,b){
     switch(sb){
       case 'arrival_desc': {
         var a1=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
         var b1=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
-        return b1-a1;
+        return (b1-a1)||subjCmp(a,b);
       }
       case 'referred_asc': {
         var a2=toDate(a.referredDate)||new Date(0);
         var b2=toDate(b.referredDate)||new Date(0);
-        return a2-b2;
+        return (a2-b2)||subjCmp(a,b);
       }
       case 'referred_desc': {
         var a3=toDate(a.referredDate)||new Date(0);
         var b3=toDate(b.referredDate)||new Date(0);
-        return b3-a3;
+        return (b3-a3)||subjCmp(a,b);
       }
       case 'status': {
         var sa=stOrder[a.status]!==undefined?stOrder[a.status]:9;
         var sbb=stOrder[b.status]!==undefined?stOrder[b.status]:9;
-        return sa-sbb;
+        return (sa-sbb)||subjCmp(a,b);
       }
       case 'letterNo':
-        return String(a.letterNo||'').localeCompare(String(b.letterNo||''),'ar',{numeric:true});
+        return String(a.letterNo||'').localeCompare(String(b.letterNo||''),'ar',{numeric:true})||subjCmp(a,b);
       case 'entity':
-        return String(a.fromEntity||'').localeCompare(String(b.fromEntity||''),'ar');
+        return String(a.fromEntity||'').localeCompare(String(b.fromEntity||''),'ar')||subjCmp(a,b);
       case 'arrival_asc':
       default: {
         var a0=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
         var b0=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
-        return a0-b0;
+        return (a0-b0)||subjCmp(a,b);
       }
     }
   });
@@ -1895,11 +1900,11 @@ function idxFiltered(){
     }
     return true;
   });
-  // نفس ترتيب السجل: الأقدم أولاً حسب تاريخ الوصول
+  // نفس ترتيب السجل: الأقدم أولاً حسب تاريخ الوصول، مع فرز ثانوي بالاسم لضمان ترتيب مستقر
   list.sort(function(a,b){
     var ad=toDate(a.arrivalDate)||toDate(a.letterDate)||new Date(0);
     var bd=toDate(b.arrivalDate)||toDate(b.letterDate)||new Date(0);
-    return ad-bd;
+    return (ad-bd)||String(a.subject||'').localeCompare(String(b.subject||''),'ar');
   });
   return list;
 }
@@ -2108,7 +2113,7 @@ function ghPushSilent(){
     var cfg=getGHConfig(); if(!cfg||!cfg.token) return;
     setSyncIndicator('⬆️ جاري الرفع...','#e67e22');
     var ok=await ghPut(cfg, true);
-    if(ok){ setSyncIndicator('✅ متزامن','#5cd3a6'); }
+    if(ok){ setSyncIndicator('✅ متزامن','#5cd3a6'); window._lastLocalEditAt=0; /* اكتمل الرفع — أمان من الآن يسمح بالتحميل */ }
     else { setSyncIndicator('⚠️ فشل الرفع','#e74c3c'); }
   },2000);
 }
