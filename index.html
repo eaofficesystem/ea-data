@@ -449,7 +449,7 @@ footer{text-align:center;padding:16px;font-size:11.5px;color:var(--gray);}
       <button class="btn btn-teal btn-sm" id="idxAddBtn">+ إضافة موضوع للسجل</button>
       <input type="file" id="idxImportFile" accept=".xlsx,.xls" style="display:none;">
       <button class="btn btn-outline btn-sm" id="idxClassifyBtn" style="border-color:var(--teal);color:var(--teal);">🔗 تصنيف من إكسل</button>
-      <button class="btn btn-outline btn-sm" id="idxClearUncatBtn" style="border-color:#c0392b;color:#c0392b;">🗑️ مسح غير المصنّف</button>
+      <button class="btn btn-outline btn-sm hidden" id="idxClearUncatBtn" style="border-color:#c0392b;color:#c0392b;">🗑️ مسح غير المصنّف</button>
       <button class="btn btn-outline btn-sm" id="idxExportBtn">📊 تصدير إكسل</button>
       <button class="btn btn-outline btn-sm" id="idxReportBtn">📈 التقارير</button>
       <button class="btn btn-outline btn-sm" id="idxHolidaysBtn">📅 الإجازات</button>
@@ -541,7 +541,7 @@ var SOURCES = [
 ];
 
 /* ═══════════════ CONSTANTS ════════════════ */
-var APP_VERSION = '2026-08-12.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
+var APP_VERSION = '2026-08-14.1'; window.APP_VERSION=APP_VERSION; // يتغيّر مع كل تحديث — لا تعدّليه يدوياً
 var SK  = 'incoming_v2';
 var SSK = 'incoming_sess_v1';
 var ACK = 'incoming_acc_v1';
@@ -619,7 +619,7 @@ function saveIdxCfg(cfg){ try{ localStorage.setItem(IDX_CFG_KEY,JSON.stringify(c
 // الفئة اختيارية: تُستخدم لنسبة الإنجاز. المواضيع بلا فئة تظهر تحت "غير مصنّف"
 function idxSourceTopics(){
   return S.topics.filter(function(t){
-    return t.source==='gov' && t.referredDate && !t.idxExcluded;
+    return t.source==='gov' && !t.idxExcluded && t.idxCategory && idxCat(t.idxCategory);
   });
 }
 
@@ -1830,8 +1830,6 @@ window.showIndex=function showIndex(){
   if(addBtn) addBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
   var impBtn=document.getElementById('idxClassifyBtn');
   if(impBtn) impBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
-  var clrBtn=document.getElementById('idxClearUncatBtn');
-  if(clrBtn) clrBtn.classList.toggle('hidden', !(role==='admin'||role==='editor'));
   idxRenderAll();
 }
 
@@ -1845,11 +1843,9 @@ function idxRenderTabs(){
     return '<button class="src-tab'+(cat.key===S.idxCat?' active':'')+'" data-cat="'+cat.key+'">'+
       esc(cat.label)+' <span style="opacity:.7">('+cat.target+' يوم)</span> <span class="cnt">'+n+'</span></button>';
   });
-  // تبويب غير مصنّف
-  var uncat=src.filter(function(t){ return !t.idxCategory || !idxCat(t.idxCategory); }).length;
-  tabs.push('<button class="src-tab'+('uncat'===S.idxCat?' active':'')+'" data-cat="uncat" style="border-style:dashed;">'+
-    'غير مصنّف <span class="cnt">'+uncat+'</span></button>');
   el.innerHTML=tabs.join('');
+  // لو كان التبويب النشط "uncat" (لم يعد موجوداً)، نرجّع لأول فئة تلقائياً
+  if(S.idxCat==='uncat' && IDX_CATEGORIES.length){ S.idxCat=IDX_CATEGORIES[0].key; }
 }
 
 function idxRenderKPI(){
@@ -1870,7 +1866,6 @@ function idxRenderKPI(){
     cards.push({label:cat.label, val:avg, cnt:cnt});
   });
   var totalAvg = totalCount>0 ? Math.round(totalAch/totalCount) : null;
-  var uncatCount = src.filter(function(t){ return !t.idxCategory || !idxCat(t.idxCategory); }).length;
   var html='<div class="kpi-card" style="border-top:3px solid var(--teal);">'+
     '<div class="kpi-num">'+(totalAvg!==null?totalAvg+'%':'—')+'</div>'+
     '<div class="kpi-lbl">نسبة الإنجاز الكلية</div></div>';
@@ -1879,10 +1874,6 @@ function idxRenderKPI(){
     html+='<div class="kpi-card"><div class="kpi-num" style="color:'+color+'">'+(c.val!==null?c.val+'%':'—')+'</div>'+
       '<div class="kpi-lbl">'+esc(c.label)+'<br><span style="font-size:10px;color:var(--gray)">'+c.cnt+' موضوع</span></div></div>';
   });
-  if(uncatCount>0){
-    html+='<div class="kpi-card" style="border-top:3px solid #9aa6b8;"><div class="kpi-num" style="color:#9aa6b8">'+uncatCount+'</div>'+
-      '<div class="kpi-lbl">غير مصنّف<br><span style="font-size:10px;color:var(--gray)">يحتاج تحديد فئة</span></div></div>';
-  }
   el.innerHTML=html;
 }
 
